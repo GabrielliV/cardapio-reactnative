@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "cardapio-reactnative",
+    "slug": "cardapio-reactnative",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
