@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { NativeRouter, Route, Routes } from 'react-router-native';
 import Login from './src/components/Login/Login';
-import Cardapio from './components/Cardapio/Cardapio';
+import Cardapio from './src/components/Cardapio/Cardapio';
 import { useAppInfo } from './src/hooks/useAppInfo';
 import { AppContext } from './src/context/AppContext';
 

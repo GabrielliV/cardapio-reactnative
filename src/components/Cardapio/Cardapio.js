@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import Pratos from './Pratos';
 import { useNavigate } from 'react-router-native';
-import { AppContext } from '../../src/context/AppContext';
+import { AppContext } from '../../context/AppContext';
 
 const Cardapio = () => {
   const navigate = useNavigate();
