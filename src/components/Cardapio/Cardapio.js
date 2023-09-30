@@ -13,6 +13,7 @@ const Cardapio = () => {
     produtos(3)
       .then((response) => {
         if (response.data && Array.isArray(response.data)) {
+          setListProdutos(response.data);
         } else {
           console.error('Nenhum produto encontrado na categoria.');
         }
