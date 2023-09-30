@@ -98,7 +98,6 @@ function Login({setMesaApp, setNomeEstabelecimentoApp, setIdApp}) {
             style={styles.customButton}
             onPress={() => {
               loginCliente(mesa, login, identificador).then((response) => {
-                debugger
                 setMesaApp(response.data.mesa)
                 setNomeEstabelecimentoApp(response.data.estabelecimento.nome)
                 setIdApp(response.data.id)

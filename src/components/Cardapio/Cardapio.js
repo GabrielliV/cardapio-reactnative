@@ -1,12 +1,27 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
-import Pratos from './Pratos';
+import React, { useContext, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
 import { useNavigate } from 'react-router-native';
 import { AppContext } from '../../context/AppContext';
+import { produtos } from '../../services/Produtos';
 
 const Cardapio = () => {
   const navigate = useNavigate();
   const appInfo = useContext(AppContext);
+  const [listProdutos, setListProdutos] = useState([]);
+
+  const listarProdutos = () => {
+    produtos(3)
+      .then((response) => {
+        if (response.data && Array.isArray(response.data)) {
+        } else {
+          console.error('Nenhum produto encontrado na categoria.');
+        }
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar produtos:', error);
+      });
+  };
+  
 
   return (
     <View style={styles.container}>
@@ -28,24 +43,42 @@ const Cardapio = () => {
             <TouchableOpacity style={styles.botaoCarrinho}>
             {/* Ícone de carrinho  */}
             </TouchableOpacity>
-            <TouchableOpacity
+        </View>
+        <View style={styles.barraSair}>
+          <TouchableOpacity
             onPress={() => {
                 navigate("/")
             }}
           >
-            <Text style={styles.buttonText}>SAIR</Text>
+            <Text style={styles.botaoSair}>X</Text>
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.menu}>
-        <Text style={styles.categoria}>Pratos</Text>
+        <TouchableOpacity onPress={() => listarProdutos()}>
+          <Text style={styles.categoria}>Pratos</Text>
+        </TouchableOpacity>
         <Text style={styles.categoria}>Bebidas Alcoólicas</Text>
         <Text style={styles.categoria}>Bebidas Não Alcoólicas</Text>
         <Text style={styles.categoria}>Sobremesas</Text>
         <Text style={styles.categoria}>Outros</Text>
       </View>
       <View style={styles.conteudo}>
-        <Pratos />
+        <FlatList
+          data={listProdutos}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.produtoContainer}>
+              <Image source={{ uri: item.foto }} style={styles.imagemProduto} />
+              <Text style={styles.nomeProduto}>{item.nome}</Text>
+              <Text style={styles.descricaoProduto}>{item.descricao}</Text>
+              <Text style={styles.precoProduto}>{item.preco}</Text>
+              <TouchableOpacity style={styles.botaoAdicionar}>
+                <Text style={styles.textoBotao}>Adicionar ao carrinho</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
       </View>
     </View>
   );
@@ -105,13 +138,22 @@ const styles = StyleSheet.create({
   },
   barraCarrinho: {
     backgroundColor: '#CD0707',
-    width: 260,
+    width: 280,
     height: 80,
     justifyContent: 'center', // Centraliza verticalmente
     alignItems: 'center', // Centraliza horizontalmente
   },
   botaoCarrinho: {
     // Estilo do botão do carrinho
+  },
+  barraSair: {
+    width: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  botaoSair: {
+    textAlign: 'center',
+    paddingLeft: 30,
   },
   menu: {
     width: 223, // Largura do menu lateral
@@ -129,6 +171,40 @@ const styles = StyleSheet.create({
     flex: 1, // Para ocupar o restante do espaço disponível
     backgroundColor: 'white', // Cor de fundo branca do conteúdo
     padding: 20,
+  },
+
+// Produtos
+  produtoContainer: {
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    borderRadius: 5,
+  },
+  imagemProduto: {
+    width: 100,
+    height: 100,
+  },
+  nomeProduto: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  descricaoProduto: {
+    fontSize: 16,
+  },
+  precoProduto: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  botaoAdicionar: {
+    backgroundColor: '#3d9467',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  textoBotao: {
+    color: 'white',
+    textAlign: 'center',
   },
 });
 
