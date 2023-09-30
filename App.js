@@ -1,13 +1,28 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { NativeRouter, Route, Routes } from 'react-router-native';
+import Login from './src/components/Login/Login';
+import Cardapio from './components/Cardapio/Cardapio';
+import { useAppInfo } from './src/hooks/useAppInfo';
+import { AppContext } from './src/context/AppContext';
 
 export default function App() {
+  const appInfo = useAppInfo();
+
   return (
+    <NativeRouter>
+      <AppContext.Provider value={{mesaApp: appInfo.mesa, nomeEstabelecimentoApp: appInfo.nomeEstabelecimento, idApp: appInfo.id}}>
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <Routes>
+        <Route path='/' element={
+          <Login setMesaApp={appInfo.setMesa} setNomeEstabelecimentoApp={appInfo.setNomeEstabelecimento} setIdApp={appInfo.setId} />
+          } />
+        <Route path='/cardapio' Component={Cardapio} />
+      </Routes>
     </View>
+    </AppContext.Provider>
+    </NativeRouter>
   );
 }
 
