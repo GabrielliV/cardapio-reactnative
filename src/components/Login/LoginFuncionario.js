@@ -1,56 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigate } from 'react-router-native';
-import { loginCliente } from '../../services/Login';
+import { loginFuncionario } from '../../services/Login';
 
-function Login({setMesaApp, setNomeEstabelecimentoApp, setIdApp}) {
+function LoginFuncionario() {
   const navigate = useNavigate();
   const [login, setLogin] = useState("");
   const [identificador, setIdentificador] = useState("");
-  const [mesa, setMesa] = useState("");
 
   return (
     <View style={styles.loginContainer}>
       <View style={styles.inputContainer}>
         <Text style={styles.loginTitle}>LOGIN DO CARDÁPIO</Text>
         <TextInput
-          style={styles.loginField}
+          style={styles.field}
           placeholder="Login"
           value={login}
           onChangeText={setLogin}
         />
         <View style={styles.buttonContainer}>
           <TextInput
-            style={styles.identField}
+            style={styles.field}
             placeholder="Identificador"
             value={identificador}
             onChangeText={setIdentificador}
           />
-          <TextInput
-            style={styles.mesaField}
-            placeholder="Mesa"
-            value={mesa}
-            onChangeText={setMesa}
-          />
         </View>
         <View style={styles.inferior}>
-          <TouchableOpacity onPress={() => {
-            navigate("/loginFuncionario")
-          }}>
-            <Text style={styles.logarComoFuncionario}>Logar como funcionário</Text>
+        <TouchableOpacity onPress={() => navigate("/")}>
+            <Text style={styles.logarNoCardapio}>Logar no cardápio</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-              style={styles.customButton}
-              onPress={() => {
-                loginCliente(mesa, login, identificador).then((response) => {
-                  setMesaApp(response.data.mesa)
-                  setNomeEstabelecimentoApp(response.data.estabelecimento.nome)
-                  setIdApp(response.data.id)
-                  navigate("/cardapio")
-                })
-              }}
-            >
+          <TouchableOpacity 
+            style={styles.customButton} onPress={() => navigate("/pedidos")}>
               <Text style={styles.buttonText}>ENTRAR</Text>
             </TouchableOpacity>
           </View>
@@ -58,20 +40,6 @@ function Login({setMesaApp, setNomeEstabelecimentoApp, setIdApp}) {
     </View>
   );
 }
-
-const sharedStyles = {
-  field: {
-    width: '100%',
-    height: 40,
-    padding: 10,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    marginBottom: 10,
-    fontSize: 16,
-    backgroundColor: 'white',
-    borderRadius: 5,
-  },
-};
 
 const styles = StyleSheet.create({
   loginContainer: {
@@ -91,18 +59,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  loginField: {
-    ...sharedStyles.field,
+  field: {
+    width: '100%',
+    height: 40,
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    marginBottom: 10,
+    fontSize: 16,
+    backgroundColor: 'white',
+    borderRadius: 5,
     width: 310,
-  },
-  identField: {
-    ...sharedStyles.field,
-    width: 208,
-  },
-  mesaField: {
-    ...sharedStyles.field,
-    width: 65,
-    marginLeft: 37,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -124,9 +91,9 @@ const styles = StyleSheet.create({
     width: 310, // Ajuste o tamanho conforme necessário
     marginTop: 20, // Adicione margem superior conforme necessário
   },
-  logarComoFuncionario: {
+  logarNoCardapio: {
     fontSize: 18,
   },
 });
 
-export default Login;
+export default LoginFuncionario;

@@ -1,16 +1,32 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigate } from 'react-router-native';
 import { AppContext } from '../../context/AppContext';
 import { produtos } from '../../services/Produtos';
+
 
 const Cardapio = () => {
   const navigate = useNavigate();
   const appInfo = useContext(AppContext);
   const [listProdutos, setListProdutos] = useState([]);
+  const [carrinho, setCarrinho] = useState([]);
 
-  const listarProdutos = () => {
-    produtos(3)
+  const adicionarAoCarrinho = (id, nome, preco) => {
+    const itemNoCarrinho = carrinho.find((item) => item.id === id);
+
+    if (itemNoCarrinho) {
+      const novoCarrinho = carrinho.map((item) =>
+        item.id === id ? { ...item, quantidade: item.quantidade + 1 } : item
+      );
+      setCarrinho(novoCarrinho);
+    } else {
+      setCarrinho([...carrinho, { id, nome, preco, quantidade: 1 }]);
+    }
+  };
+
+  const listarProdutos = (categoriaId) => {
+    produtos(categoriaId)
       .then((response) => {
         if (response.data && Array.isArray(response.data)) {
           setListProdutos(response.data);
@@ -22,7 +38,10 @@ const Cardapio = () => {
         console.error('Erro ao buscar produtos:', error);
       });
   };
-  
+
+  useEffect(() => {
+    listarProdutos(1);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -33,17 +52,15 @@ const Cardapio = () => {
         <View >
             <Text style={styles.nomeEstabelecimento}>{appInfo.nomeEstabelecimentoApp}</Text>
         </View>
-        <View style={styles.barraBusca}>
-            <Text style={styles.buscar}>Buscar</Text>
-            <TouchableOpacity style={styles.botaoBusca}>
-            {/* Ícone de busca  */}
-            </TouchableOpacity>
+        <View style={styles.barraBusca}>            
+          <TouchableOpacity style={styles.botaoBusca}>   
+            <Icon name="search" size={25} color="white"/>         
+          </TouchableOpacity>
         </View>
-        <View style={styles.barraCarrinho}>
-            <Text style={styles.carrinho}>Pedidos</Text>
-            <TouchableOpacity style={styles.botaoCarrinho}>
-            {/* Ícone de carrinho  */}
-            </TouchableOpacity>
+        <View style={styles.barraCarrinho}>                      
+          <TouchableOpacity style={styles.botaoCarrinho}> 
+            <Icon name="shopping-cart" size={30} color="white"/>           
+          </TouchableOpacity>
         </View>
         <View style={styles.barraSair}>
           <TouchableOpacity
@@ -51,35 +68,69 @@ const Cardapio = () => {
                 navigate("/")
             }}
           >
-            <Text style={styles.botaoSair}>X</Text>
+            <Icon name="close" size={25} color="black"/>    
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.menu}>
-        <TouchableOpacity onPress={() => listarProdutos()}>
-          <Text style={styles.categoria}>Pratos</Text>
-        </TouchableOpacity>
-        <Text style={styles.categoria}>Bebidas Alcoólicas</Text>
-        <Text style={styles.categoria}>Bebidas Não Alcoólicas</Text>
-        <Text style={styles.categoria}>Sobremesas</Text>
-        <Text style={styles.categoria}>Outros</Text>
-      </View>
-      <View style={styles.conteudo}>
+
+      <View style={styles.itens}>
+        <View style={styles.menu}>
+          <TouchableOpacity onPress={() => listarProdutos(1)}>
+            <Text style={styles.categoria}>Pratos</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => listarProdutos(2)}>
+          <Text style={styles.categoria}>Bebidas Alcoólicas</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => listarProdutos(3)}>
+            <Text style={styles.categoria}>Bebidas Não Alcoólicas</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => listarProdutos(4)}>
+            <Text style={styles.categoria}>Sobremesas</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity onPress={() => listarProdutos(5)}>
+            <Text style={styles.categoria}>Outros</Text>
+          </TouchableOpacity>
+          
+        </View>
+        <View style={styles.conteudo}>
         <FlatList
-          data={listProdutos}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.produtoContainer}>
-              <Image source={{ uri: item.foto }} style={styles.imagemProduto} />
-              <Text style={styles.nomeProduto}>{item.nome}</Text>
-              <Text style={styles.descricaoProduto}>{item.descricao}</Text>
-              <Text style={styles.precoProduto}>{item.preco}</Text>
-              <TouchableOpacity style={styles.botaoAdicionar}>
-                <Text style={styles.textoBotao}>Adicionar ao carrinho</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        />
+            data={listProdutos}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.produtoContainer}>
+                <View style={styles.grupoEsquerdo}>
+                  <Image source={{ uri: item.foto }} style={styles.imagemProduto} />
+                </View>
+                <View style={styles.grupoCentro}>
+                  <Text style={styles.nomeProduto}>{item.nome}</Text>
+                  <Text style={styles.descricaoProduto}>{item.descricao}</Text>
+                </View>
+                <View style={styles.grupoDireito}>
+                  <Text style={styles.precoProduto}>R$ {item.preco}</Text>
+                  <TouchableOpacity style={styles.botaoAdicionar} onPress={
+                    () => adicionarAoCarrinho(item.id, item.nome, item.preco)}>
+                    <Text style={styles.textoBotao}>Adicionar ao carrinho</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          />
+          {/* <View style={styles.conteudoCarrinho}>
+            <FlatList
+              data={carrinho}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <Text>
+                  Item ID: {item.id}, Nome: {item.nome}, Preço: {item.preco}, Quantidade: {item.quantidade}
+                </Text>
+              )}
+            />
+          </View> */}
+        </View>
       </View>
     </View>
   );
@@ -91,6 +142,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column', // Alterado para "column" para organizar os elementos verticalmente
     width: 1280,
     height: 800,
+  },
+  itens: {
+    flex: 1, 
+    flexDirection: 'row',
   },
   barraSuperior: {
     flexDirection: 'row',
@@ -133,10 +188,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
-  botaoBusca: {
-    // Estilo do botão de busca
-    marginRight: 10,
-  },
   barraCarrinho: {
     backgroundColor: '#CD0707',
     width: 280,
@@ -144,17 +195,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center', // Centraliza verticalmente
     alignItems: 'center', // Centraliza horizontalmente
   },
-  botaoCarrinho: {
-    // Estilo do botão do carrinho
-  },
   barraSair: {
+    alignSelf: 'flex',
     width: 40,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  botaoSair: {
-    textAlign: 'center',
-    paddingLeft: 30,
   },
   menu: {
     width: 223, // Largura do menu lateral
@@ -174,34 +219,52 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 
-// Produtos
+  // Produtos
   produtoContainer: {
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#ccc',
     padding: 10,
     borderRadius: 5,
+    backgroundColor: 'black',
+    color: 'white',
+    flexDirection: 'row',
+  },
+  grupoEsquerdo: {
+    flexDirection: 'column',
+  },
+  grupoCentro: {
+    flex: 1, // Ocupa o espaço restante à direita da imagem
+    marginTop: 10, // Mover o marginTop para cá
+  },
+  grupoDireito: {
+    marginRight: 20,
   },
   imagemProduto: {
-    width: 100,
-    height: 100,
+    width: 170,
+    height: 170,
   },
   nomeProduto: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
+    color: 'white',
   },
   descricaoProduto: {
-    fontSize: 16,
+    fontSize: 20,
+    color: 'white',
   },
   precoProduto: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
+    color: 'white',
+    alignSelf: 'flex-end', // Alinha o preço ao final do espaço do grupoCentro
+    marginTop: 30,
   },
   botaoAdicionar: {
     backgroundColor: '#3d9467',
     padding: 10,
     borderRadius: 5,
-    marginTop: 10,
+    marginTop: 45,
+    alignSelf: 'flex-end', // Alinha o botão de adicionar ao final do espaço do grupoCentro
   },
   textoBotao: {
     color: 'white',
