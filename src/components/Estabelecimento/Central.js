@@ -1,11 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
 import { useNavigate } from 'react-router-native';
+import { EstabelecimentoContext } from '../../context/EstabelecimentoContext';
 
 
 const Central = ({ children }) => {
   const navigate = useNavigate();
-  //const appInfo = useContext(AppContext);
+  const estabelecimentoInfo = useContext(EstabelecimentoContext);
 
   return (    
     <View style={styles.container}>
@@ -13,8 +14,7 @@ const Central = ({ children }) => {
       <View style={styles.barraEsquerda}>
         </View>
         <View style={styles.barraEstabelecimento}>
-            {/* <Text style={styles.nomeEstabelecimento}>{appInfo.nomeEstabelecimentoApp}</Text> */}
-            <Text style={styles.nomeEstabelecimento}>Nome Estabelecimento</Text>
+            <Text style={styles.nomeEstabelecimento}>{estabelecimentoInfo.nome}</Text>
         </View>
         <View style={styles.barraSair}>
           <TouchableOpacity
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   },
   barraSuperior: {
     flexDirection: 'row',
-    backgroundColor: '#D9D9D9', // Cor de fundo da barra superior
+    backgroundColor: 'black',
     height: 80,
     justifyContent: 'space-between',
   },
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
   nomeEstabelecimento: {
     paddingLeft: 10,
     fontSize: 18,
+    color: 'white',
   },
   barraSair: {
     backgroundColor: '#CD0707',

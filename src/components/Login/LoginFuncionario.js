@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigate } from 'react-router-native';
-import { loginFuncionario } from '../../services/Login';
+import { loginFuncionario } from '../../services/LoginFuncionario';
 
-function LoginFuncionario() {
+function LoginFuncionario({setNome, setId}) {
   const navigate = useNavigate();
   const [login, setLogin] = useState("");
   const [identificador, setIdentificador] = useState("");
@@ -32,7 +32,13 @@ function LoginFuncionario() {
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={styles.customButton} onPress={() => navigate("/pedidos")}>
+            style={styles.customButton} onPress={() => {
+              loginFuncionario(login, identificador).then((response) => {
+                setId(response.data.id)
+                setNome(response.data.nome) 
+                navigate("/pedidos")
+              })
+            }}>
               <Text style={styles.buttonText}>ENTRAR</Text>
             </TouchableOpacity>
           </View>

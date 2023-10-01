@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   },
   barraSuperior: {
     flexDirection: 'row',
-    backgroundColor: '#D9D9D9', // Cor de fundo da barra superior
+    backgroundColor: '#D9D9D9',
     alignItems: 'center',
     height: 80,
   },
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     width: 280,
     height: 80,
-    justifyContent: 'center', // Centraliza verticalmente
+    justifyContent: 'center',
     alignItems: 'center',
   },
   carrinho: {
@@ -192,8 +192,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#CD0707',
     width: 280,
     height: 80,
-    justifyContent: 'center', // Centraliza verticalmente
-    alignItems: 'center', // Centraliza horizontalmente
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   barraSair: {
     alignSelf: 'flex',
@@ -202,20 +202,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   menu: {
-    width: 223, // Largura do menu lateral
-    backgroundColor: 'black', // Cor de fundo preta do menu lateral
+    width: 223,
+    backgroundColor: 'black',
     padding: 20,
   },
   categoria: {
-    color: 'white', // Cor do texto das categorias
+    color: 'white',
     fontSize: 22,
     marginTop: 50,
     marginBottom: 50,
     textAlign: 'center',
   },
   conteudo: {
-    flex: 1, // Para ocupar o restante do espaço disponível
-    backgroundColor: 'white', // Cor de fundo branca do conteúdo
+    flex: 1,
+    backgroundColor: 'white',
     padding: 20,
   },
 
@@ -233,8 +233,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   grupoCentro: {
-    flex: 1, // Ocupa o espaço restante à direita da imagem
-    marginTop: 10, // Mover o marginTop para cá
+    flex: 1,
+    marginTop: 10,
   },
   grupoDireito: {
     marginRight: 20,
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
-    alignSelf: 'flex-end', // Alinha o preço ao final do espaço do grupoCentro
+    alignSelf: 'flex-end',
     marginTop: 30,
   },
   botaoAdicionar: {
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginTop: 45,
-    alignSelf: 'flex-end', // Alinha o botão de adicionar ao final do espaço do grupoCentro
+    alignSelf: 'flex-end',
   },
   textoBotao: {
     color: 'white',

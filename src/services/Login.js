@@ -4,8 +4,3 @@ export const loginCliente = (mesa, login, identificador) => api.post(`cardapio/m
     login,
     identificador
 })
-
-export const loginFuncionario = (login, identificador) => api.post(`cardapio/estabelecimentos/login`, {
-    login,
-    identificador
-})
