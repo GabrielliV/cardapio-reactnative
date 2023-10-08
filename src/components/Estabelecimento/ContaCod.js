@@ -3,59 +3,65 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 import { useParams } from 'react-router-native';
 import { useNavigate } from 'react-router-native';
 import Central from './Central';
-import { listarPedido, finalizar } from '../../services/Pedidos';
+import { listarPedidoCod } from '../../services/Pedidos';
+import { finalizarContaCod } from '../../services/Conta';
 
-const Pedido = () => {
+const ContaCod = () => {
     const navigate = useNavigate();
-    const { id } = useParams();
-    const [listPedido, setListPedido] = useState([]);
+    const { cod } = useParams();
+    const [listConta, setListConta] = useState([]);
 
-    const listaPedido = () => {
-        listarPedido(id)
+    const listaConta = () => {
+        listarPedidoCod(cod)
         .then((response) => {
             if (response.data) {
-            setListPedido(response.data);
+                setListConta(response.data);
             } else {
-            console.error('Nenhum pedido foi encontrado');
+            console.error('Nenhuma conta foi encontrado');
             }
         })
         .catch((error) => {
-            console.error('Erro ao buscar pedido:', error);
+            console.error('Erro ao buscar conta:', error);
         });
     };
 
   useEffect(() => {
-    listaPedido();
+    listaConta();
   }, []);
-
-  return (   
-    <Central>
-        <View style={styles.container}>
-            <Text style={styles.label}>PEDIDO {listPedido.id}</Text>
-            <Text style={styles.label}>QTDE</Text>
+  
+    return (   
+      <Central>
+        <View style={styles.containerCod}>
+            <Text style={styles.label}>Cód. {listConta.cod}</Text>
         </View>
-        <View>
+        <View style={styles.container}>
+            <Text style={styles.label}>PRODUTO</Text>
+            <Text style={styles.labelQtde}>QTDE</Text>
+            <Text style={styles.label}>VALOR UNITÁRIO</Text>
+        </View>
+        <View style={styles.scrollContainer}>
             <FlatList
-                data={listPedido.itemPedido}
+                data={listConta.itensDto}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                 <View style={styles.itens}>
                     <View style={styles.infoContainer}>
-                        <Text style={styles.nome}>{item.produto.nome}</Text>                
-                        <Text style={styles.qtde}>{item.qtde}</Text>      
+                        <Text style={styles.itemTexto}>{item.nome}</Text>                
+                        <Text style={styles.itemTexto}>{item.qtde}</Text>      
+                        <Text style={styles.itemTexto}>R$ {typeof item.valor === 'number' ? item.valor.toFixed(2).replace('.', ',') : '0,00'}</Text>      
                     </View>          
                 </View>
                 )}
             />            
         </View>
         <View style={styles.inferior}>
-            <Text style={styles.label}>OBSERVAÇÃO:</Text>
+            <Text style={styles.label}>TOTAL:</Text>
             <View style={styles.barraInferior}>
-            <Text style={styles.observacao}>{listPedido.observacao}</Text>
-                <TouchableOpacity style={styles.botaoFinalizar} 
+            <Text style={styles.total}>R$ {typeof listConta.total === 'number' ? listConta.total.toFixed(2).replace('.', ',') : '0,00'}</Text>
+                <TouchableOpacity style={styles.botaoFinalizar}
                     onPress={() => {
-                        finalizar(listPedido.id).then(() => {
-                            navigate("/pedidos")
+                        finalizarContaCod(cod).then(() => {
+                            navigate("/mesas")
                         })
                     }}
                     >
@@ -63,11 +69,17 @@ const Pedido = () => {
                 </TouchableOpacity>
             </View>
         </View>
-    </Central> 
-  );
-};
-
-const styles = StyleSheet.create({
+      </Central> 
+    );
+  };
+  
+  const styles = StyleSheet.create({
+    containerCod: {
+        flexDirection: 'row',
+        paddingStart: 23,
+        paddingTop: 23,
+        justifyContent: 'space-between',
+    },
     container: {
         flexDirection: 'row',
         padding: 23,
@@ -78,6 +90,10 @@ const styles = StyleSheet.create({
         padding: 23,
         justifyContent: 'space-between',
     },
+    scrollContainer: {
+        maxHeight: 400,
+        flex: 0,
+    },
     infoContainer: {
         marginEnd: 200,
         justifyContent: 'space-between',   
@@ -87,12 +103,13 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    nome: {
+    labelQtde: {
         fontSize: 18,
+        fontWeight: 'bold',
+        marginStart: 150,
     },
-    qtde: {
+    itemTexto: {
         fontSize: 18,
-        marginLeft: 100,
     },
     botaoFinalizar: {
         backgroundColor: '#CD0707',
@@ -110,7 +127,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-end',
     },
-    observacao: {
+    total: {
         fontSize: 18,
     },
     barraInferior: {
@@ -119,6 +136,6 @@ const styles = StyleSheet.create({
         marginEnd: 200,
     }
   });
-  
 
-export default Pedido;
+  export default ContaCod;
+  

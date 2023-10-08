@@ -13,6 +13,8 @@ import Mesas from './src/components/Estabelecimento/Mesas';
 import Produtos from './src/components/Estabelecimento/Produtos';
 import Relatorios from './src/components/Estabelecimento/Relatorios';
 import Pedido from './src/components/Estabelecimento/Pedido';
+import ContaMesa from './src/components/Estabelecimento/ContaMesa';
+import ContaCod from './src/components/Estabelecimento/ContaCod';
 
 export default function App() {
   const appInfo = useAppInfo();
@@ -29,6 +31,8 @@ export default function App() {
               <Route path='/loginFuncionario' element={<LoginFuncionario setNome={estabelecimentoInfo.setNome} setId={estabelecimentoInfo.setId} />} />
               <Route path='/pedidos' element={<Pedidos />} />
               <Route path='/mesas' element={<Mesas />} />
+              <Route path='/contaMesa/:id/:mesa' element={<ContaMesa />} />
+              <Route path='/contaCod/:cod' element={<ContaCod />} />
               <Route path='/produtos' element={<Produtos />} />
               <Route path='/relatorios' element={<Relatorios />} />
               <Route path='/pedido/:id' element={<Pedido />} />

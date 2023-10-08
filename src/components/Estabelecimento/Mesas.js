@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigate } from 'react-router-native';
 import { EstabelecimentoContext } from '../../context/EstabelecimentoContext';
-import { listarMesas, ativaInativaMesa } from '../../services/Mesas';
+import { listarMesas, ativaInativaMesa, criaMesa } from '../../services/Mesas';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Central from './Central';
 
@@ -12,20 +12,13 @@ const Mesas = () => {
   const [listMesas, setListMesas] = useState([]);
   const [reloadPage, setReloadPage] = useState(false);
   const [cod, setCod] = useState("");
-  const [mesa, setMesa] = useState("");
+  const [inputMesa, setInputMesa] = useState("");
 
-  const handleMesaDeletada= (mesaId) => {
-    deletarMesa(mesaId).then(() => {
-      setReloadPage(true);
-    });
-  };
-  
   const listaMesas = () => {
     listarMesas(estabelecimentoInfo.id)
       .then((response) => {
         if (response.data && Array.isArray(response.data)) {
           setListMesas(response.data);
-          console.log(response.data);
         } else {
           console.error('Nenhuma mesa cadastrada.');
         }
@@ -60,12 +53,16 @@ const Mesas = () => {
             onChangeText={setCod}
           />
         
-          <TouchableOpacity style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.buttonContainer}
+            onPress={() => {
+              navigate(`/contaCod/${cod}`); 
+            }}
+          >
             <Icon name="search" style={styles.iconBotao} size={25}/>
           </TouchableOpacity>
         </View>
       </View>
-      <View>
+      <View style={styles.scrollContainer}>
         <FlatList
             data={listMesas}
             keyExtractor={(item) => item.id}
@@ -73,7 +70,11 @@ const Mesas = () => {
               <View style={styles.itens}>
                 <Text style={styles.texto}>Mesa {item.mesa}</Text>
                 <Text style={styles.texto}>{item.status}</Text>
-                <TouchableOpacity style={styles.botaoVerde}>
+                <TouchableOpacity style={styles.botaoVerde}
+                  onPress={() => {
+                    navigate(`/contaMesa/${item.id}/${item.mesa}`); 
+                  }}
+                >
                   <Text style={styles.textoBotao}>Ver conta</Text>
                 </TouchableOpacity>
 
@@ -96,12 +97,19 @@ const Mesas = () => {
           <Text style={styles.textMesa}>Mesa</Text>
           <TextInput
             style={styles.mesaInput}
-            value={mesa}
-            onChangeText={setMesa}
+            value={inputMesa}
+            onChangeText={setInputMesa}
           />
         
-        <TouchableOpacity style={styles.botaoVerde}>
-          <Text style={styles.textoBotao}>Adicionar</Text>
+        <TouchableOpacity style={styles.botaoVerde}
+          onPress={() => {
+            criaMesa(estabelecimentoInfo.id, inputMesa).then(() => {
+              setReloadPage(true);
+              setInputMesa('');
+              })
+            }}
+          >
+          <Text style={styles.textoBotao}>Criar</Text>
         </TouchableOpacity>
         </View>
       </View>
@@ -117,6 +125,10 @@ const styles = StyleSheet.create({
     padding: 23,
     borderColor: '#ccc',
   },
+  scrollContainer: {
+    maxHeight: 495,
+    flex: 0,
+  },
   texto: {
     fontSize: 18,
   },
@@ -130,7 +142,7 @@ const styles = StyleSheet.create({
   },
   botaoVerde: {
     backgroundColor: '#3d9467',
-    paddingHorizontal: 15,
+    width: 100,
     paddingVertical: 4,
     borderRadius: 5,
   },
@@ -155,6 +167,7 @@ const styles = StyleSheet.create({
     marginEnd: 10,
   },
   codInput: {
+    fontSize: 18,
     width: 220,
     height: 42,
     borderWidth: 1,
@@ -184,6 +197,7 @@ const styles = StyleSheet.create({
   mesaInput: {
     width: 220,
     height: 42,
+    fontSize: 18,
     borderWidth: 1,
     borderColor: 'gray',
     padding: 8,

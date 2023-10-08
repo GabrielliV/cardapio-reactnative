@@ -60,7 +60,7 @@ const Pedidos = () => {
 
   return (   
     <Central>
-      <View>
+      <View style={styles.scrollContainer}>
         <FlatList
             data={listPedidos}
             keyExtractor={(item) => item.id}
@@ -91,7 +91,7 @@ const Pedidos = () => {
           />
       </View>
       <View style={styles.barraTempoMedio}>
-        <Text style={styles.textoTempoMedio}>Tempo Médio: {listTempoMedio}</Text>
+        <Text style={styles.textoTempoMedio}>Tempo médio de hoje: {listTempoMedio}</Text>
       </View>
     </Central> 
   );
@@ -104,6 +104,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 23,
     borderColor: '#ccc',
+  },
+  scrollContainer: {
+    maxHeight: 495,
+    flex: 0,
   },
   texto: {
     fontSize: 18,

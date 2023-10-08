@@ -6,4 +6,8 @@ export const tempoMedio = (estabelecimentoId) => api.get(`cardapio/pedidos/tempo
 
 export const listarPedido = (id) => api.get(`cardapio/pedidos/pedido/${id}`)
 
+export const listarPedidoMesa = (mesaId) => api.get(`cardapio/pedidos/mesa/${mesaId}`)
+
+export const listarPedidoCod = (cod) => api.get(`cardapio/pedidos/cod/${cod}`)
+
 export const finalizar = (pedidoId) => api.post(`cardapio/pedidos/finalizar/${pedidoId}`)
