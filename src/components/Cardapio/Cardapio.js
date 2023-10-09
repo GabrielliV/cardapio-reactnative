@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigate } from 'react-router-native';
 import { AppContext } from '../../context/AppContext';
-import { produtos } from '../../services/Produtos';
+import { listaProdutos } from '../../services/Produtos';
 
 
 const Cardapio = () => {
@@ -26,7 +26,7 @@ const Cardapio = () => {
   };
 
   const listarProdutos = (categoriaId) => {
-    produtos(categoriaId)
+    listaProdutos(categoriaId)
       .then((response) => {
         if (response.data && Array.isArray(response.data)) {
           setListProdutos(response.data);

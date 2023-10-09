@@ -43,7 +43,7 @@ const Central = ({ children }) => {
 
           <TouchableOpacity>
             <Text style={styles.categoria} onPress={() => {
-                navigate("/produtos")
+                navigate("/categorias")
             }}>Produtos</Text>
           </TouchableOpacity>
 
