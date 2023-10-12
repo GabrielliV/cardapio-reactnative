@@ -45,7 +45,11 @@ return (
                 <View style={styles.column}>
                   <Text style={styles.texto}>R$ {typeof item.preco === 'number' ? item.preco.toFixed(2).replace('.', ',') : '0,00'}</Text>
                 </View>
-                <TouchableOpacity style={styles.botaoAbrir} >
+                <TouchableOpacity style={styles.botaoAbrir} 
+                  onPress={() => {
+                    navigate(`/produto/${item.id}`); 
+                }}
+                >
                   <Text style={styles.textoBotao}>Abrir</Text>
                 </TouchableOpacity>
               </View>

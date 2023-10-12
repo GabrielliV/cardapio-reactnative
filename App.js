@@ -11,6 +11,7 @@ import Cardapio from './src/components/Cardapio/Cardapio';
 import Pedidos from './src/components/Estabelecimento/Pedidos';
 import Mesas from './src/components/Estabelecimento/Mesas';
 import Produtos from './src/components/Estabelecimento/Produtos';
+import Produto from './src/components/Estabelecimento/Produto';
 import Relatorios from './src/components/Estabelecimento/Relatorios';
 import Pedido from './src/components/Estabelecimento/Pedido';
 import ContaMesa from './src/components/Estabelecimento/ContaMesa';
@@ -37,6 +38,7 @@ export default function App() {
               <Route path='/contaCod/:cod' element={<ContaCod />} />
               <Route path='/categorias' element={<Categorias />} />
               <Route path='/produtos/:categoriaId/:nome' element={<Produtos />} />
+              <Route path='/produto/:id' element={<Produto />} />
               <Route path='/relatorios' element={<Relatorios />} />
               
             </Routes>
