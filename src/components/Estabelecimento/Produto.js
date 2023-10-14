@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useParams } from 'react-router-native';
+import { useNavigate } from 'react-router-native';
 import Central from './Central';
 import { produto, ativaInativa } from '../../services/Produtos';
 
 const Produto = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [listProduto, setListProduto] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const listaProduto = () => {
     produto(id)
       .then((response) => {
         if (response.data) {
-            console.log(response.data);
           setListProduto(response.data);
         } else {
           console.error('Nenhum pedido foi encontrado');
@@ -25,7 +27,14 @@ const Produto = () => {
 
   useEffect(() => {
     listaProduto();
-  }, []);
+  }, [refreshKey]);
+
+  const handleInativar = () => {
+    ativaInativa(listProduto.id, listProduto.ativo)
+      .then(() => {
+        setRefreshKey((prevKey) => prevKey + 1);
+      });
+  };
 
   return (
     <Central>
@@ -41,18 +50,24 @@ const Produto = () => {
           </View>
           <View style={styles.rightColumn}>
             <Text style={styles.textoItem}>{listProduto.nome}</Text>
-            <Text style={styles.textoDescricao}>{listProduto.descricao}</Text>
+            <Text style={styles.textoItem}>{listProduto.descricao}</Text>
             <Text style={styles.textoItem}>R$ {typeof listProduto.preco === 'number' ? listProduto.preco.toFixed(2).replace('.', ',') : '0,00'}</Text>
             <Text style={styles.textoItem}>{listProduto.ativo ? "Ativo" : "Inativo"}</Text>
             <Text style={styles.textoItem}>{listProduto.categoria?.nome || "Categoria não especificada"}</Text>
-            <Text style={styles.textoItem}>{listProduto.foto ? "Com foto" : "Sem foto"}</Text>
+            <Image source={{ uri: listProduto.foto }} style={styles.imagemProduto} />
           </View>
         </View>
         <View style={styles.containerInferior}>
-            <TouchableOpacity style={styles.botaoInativar} >
+            <TouchableOpacity style={styles.botaoInativar} 
+                onPress={handleInativar}
+              >
                 <Text style={styles.textoBotao}>{listProduto.ativo ? "Inativar" : "Ativar"}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.botaoAlterar} >
+            <TouchableOpacity style={styles.botaoAlterar} 
+              onPress={() => {
+                  navigate(`/produto/${listProduto.id}/${listProduto.nome}/${listProduto.descricao}/${listProduto.preco}/${listProduto.categoria.id}/${listProduto.foto}`); 
+              }}
+            >
                 <Text style={styles.textoBotao}>Alterar</Text>
             </TouchableOpacity>
         </View>
@@ -76,26 +91,26 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 10,
     marginEnd: 190,
+    alignItems: 'flex-end',
   },
   texto: {
     fontWeight: 'bold',
     fontSize: 20,
-    marginBottom: 50,
+    height: 80,
   },
   textoItem: {
     fontSize: 20,
-    marginBottom: 50,
+    height: 80,
     textAlign: 'right',
+  },
+  imagemProduto: {
+    width: 150,
+    height: 150,
+    borderRadius: 3,
   },
   containerInferior: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginEnd: 190,
-  },
-  textoDescricao: {
-    textAlign: 'right',
-    fontSize: 20,
-    marginBottom: 25,
+    marginStart:20,
   },
   botaoInativar:{
     marginEnd: 40,

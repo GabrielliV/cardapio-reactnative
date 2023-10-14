@@ -17,6 +17,7 @@ import Pedido from './src/components/Estabelecimento/Pedido';
 import ContaMesa from './src/components/Estabelecimento/ContaMesa';
 import ContaCod from './src/components/Estabelecimento/ContaCod';
 import Categorias from './src/components/Estabelecimento/Categorias';
+import NovoProduto from './src/components/Estabelecimento/NovoProduto';
 
 export default function App() {
   const appInfo = useAppInfo();
@@ -39,6 +40,7 @@ export default function App() {
               <Route path='/categorias' element={<Categorias />} />
               <Route path='/produtos/:categoriaId/:nome' element={<Produtos />} />
               <Route path='/produto/:id' element={<Produto />} />
+              <Route path='/novoProduto/:categoriaId' element={<NovoProduto />} />
               <Route path='/relatorios' element={<Relatorios />} />
               
             </Routes>

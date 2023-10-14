@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigate } from 'react-router-native';
 import { useParams } from 'react-router-native';
-import { listaProdutos } from '../../services/Produtos';
+import { listaTodosProdutos } from '../../services/Produtos';
 import Central from './Central';
 
 const Produtos = () => {
@@ -11,7 +11,7 @@ const Produtos = () => {
   const [listProdutos, setListProdutos] = useState([]);
 
   const listarProdutos = () => {
-    listaProdutos(categoriaId)
+    listaTodosProdutos(categoriaId)
     .then((response) => {
         if (response.data) {
           setListProdutos(response.data);
@@ -48,7 +48,7 @@ return (
                 <TouchableOpacity style={styles.botaoAbrir} 
                   onPress={() => {
                     navigate(`/produto/${item.id}`); 
-                }}
+                  }}
                 >
                   <Text style={styles.textoBotao}>Abrir</Text>
                 </TouchableOpacity>
@@ -58,8 +58,12 @@ return (
       </View>
       <View style={styles.barraAdicionar}>
         <View style={styles.containerInferior}>
-          <Text style={styles.nome}>Categoria: {nome}</Text>
-          <TouchableOpacity style={styles.botaoAdicionar} >
+          <Text style={styles.categoria}>Categoria: {nome}</Text>
+          <TouchableOpacity style={styles.botaoAdicionar} 
+            onPress={() => {
+              navigate(`/novoProduto/${categoriaId}`); 
+            }}
+          >
             <Text style={styles.textoBotao}>Adicionar</Text>
           </TouchableOpacity>
         </View>
@@ -108,13 +112,17 @@ const styles = StyleSheet.create({
   },
   containerInferior: {
     flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    alignItems: 'center', 
   },
   nome: {
     fontSize: 18,
   },
+  categoria: {
+    fontSize: 18,
+    flex: 1,
+  },
   botaoAdicionar: {
-    marginStart: 450,
     backgroundColor: 'black',
     paddingHorizontal: 30,
     paddingVertical: 5,

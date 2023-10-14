@@ -110,7 +110,7 @@ const Cardapio = () => {
                   <Text style={styles.descricaoProduto}>{item.descricao}</Text>
                 </View>
                 <View style={styles.grupoDireito}>
-                  <Text style={styles.precoProduto}>R$ {item.preco}</Text>
+                  <Text style={styles.precoProduto}>R$ {typeof item.preco === 'number' ? item.preco.toFixed(2).replace('.', ',') : '0,00'}</Text>
                   <TouchableOpacity style={styles.botaoAdicionar} onPress={
                     () => adicionarAoCarrinho(item.id, item.nome, item.preco)}>
                     <Text style={styles.textoBotao}>Adicionar ao carrinho</Text>
@@ -139,7 +139,7 @@ const Cardapio = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column', // Alterado para "column" para organizar os elementos verticalmente
+    flexDirection: 'column',
     width: 1280,
     height: 800,
   },
@@ -242,6 +242,9 @@ const styles = StyleSheet.create({
   imagemProduto: {
     width: 170,
     height: 170,
+    marginStart: 10,
+    marginEnd: 20,
+    borderRadius: 1,
   },
   nomeProduto: {
     fontSize: 24,
