@@ -47,7 +47,7 @@ function Login({setMesaApp, setNomeEstabelecimentoApp, setIdApp}) {
                   setMesaApp(response.data.mesa)
                   setNomeEstabelecimentoApp(response.data.estabelecimento.nome)
                   setIdApp(response.data.id)
-                  navigate("/cardapio")
+                  navigate("/listaProdutos/1")
                 })
               }}
             >
