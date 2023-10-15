@@ -5,8 +5,18 @@ import { useParams } from 'react-router-native';
 import Central from './Central';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigate } from 'react-router-native';
-import { criaProduto } from '../../services/Produtos';
+import { criaProduto, produto, alteraProduto } from '../../services/Produtos';
 import * as ImagePicker from 'expo-image-picker';
+import { Dropdown } from 'react-native-element-dropdown';
+// import { SelectList } from 'react-native-dropdown-select-list'
+
+const options = [
+    { label: 'Pratos', value: '1' },
+    { label: 'Bebidas Alcoólicas', value: '2' },
+    { label: 'Outras bebidas', value: '3' },
+    { label: 'Sobremesas', value: '4' },
+    { label: 'Outros', value: '5' },
+];
 
 const NovoProduto = () => {
     const navigate = useNavigate();
@@ -15,6 +25,7 @@ const NovoProduto = () => {
     const [descricao, setDescricao] = useState("");
     const [preco, setPreco] = useState("");
     const [categoria, setCategoria] = useState("");
+    const [isFocus, setIsFocus] = useState(false);
     const [foto, setFoto] = useState('https://img2.freepng.es/20180426/wde/kisspng-computer-icons-photography-deliver-to-home-5ae20efe8d1a86.899608641524764414578.jpg');
 
     const handleSelectImage = async () => {
@@ -38,6 +49,21 @@ const NovoProduto = () => {
         }
     };
 
+    useEffect(() => {
+        if (id != null) {
+            produto(id).then((response) => {
+                setNome(response.data.nome);
+                setDescricao(response.data.descricao);
+                setPreco(response.data.preco);
+                setCategoria(categoriaId);
+
+                if (response.data.foto != null) {
+                    setFoto(response.data.foto);
+                }
+            })
+        }
+      }, []);
+
     const formatPriceToSend = (price) => {
         const numericPrice = price.replace(/[^0-9.,]/g, '');
 
@@ -47,20 +73,37 @@ const NovoProduto = () => {
     };
 
     const enviarProduto = () => {
-        const precoDouble = formatPriceToSend(preco);
+        if (id == null) {
+            const precoDouble = formatPriceToSend(preco.toString());
 
-        criaProduto(nome, descricao, precoDouble, foto, categoriaId)
-        .then((response) => {
-            if (response.data) {
-                console.log(response.data);
-                navigate(`/produto/${response.data}`);
-            } else {
-            console.error('Nenhum produto foi encontrado');
-            }
-        })
-        .catch((error) => {
-        console.error('Erro ao criar produto:', error);
-      });
+            criaProduto(nome, descricao, precoDouble, foto, categoriaId)
+            .then((response) => {
+                if (response.data) {
+                    console.log(response.data);
+                    navigate(`/produto/${response.data}`);
+                } else {
+                    console.error('Nenhum produto foi encontrado');
+                }
+            })
+            .catch((error) => {
+                console.error('Erro ao criar produto:', error);
+            });
+        } else {
+            const precoDouble = formatPriceToSend(preco.toString());
+
+            alteraProduto(id, nome, descricao, precoDouble, foto, categoria)
+            .then((response) => {
+                if (response.data) {
+                    navigate(`/produto/${id}`);
+                } else {
+                    console.error('Nenhum produto foi encontrado');
+                }
+            })
+            .catch((error) => {
+                console.error('Erro ao alterar produto:', error);
+            });
+        }
+        
     };
 
     return (
@@ -88,21 +131,29 @@ const NovoProduto = () => {
                         <TextInputMask
                             type={'money'}
                             options={{
-                                precision: 2, // Define a quantidade de casas decimais
+                                precision: 2,
                                 separator: ',',
                                 delimiter: '.',
-                                unit: 'R$ ', // Símbolo da moeda
-                                suffixUnit: '', // Símbolo após o valor, se necessário
+                                unit: 'R$ ',
                             }}
                             style={styles.input}
                             value={preco}
                             onChangeText={(text) => setPreco(text)}
                         />
-                        <TextInput
-                            style={styles.input}
-                            value={categoria}
-                            onChangeText={setCategoria}
-                        />
+                         <View>
+                            <Dropdown
+                                style={[styles.input, isFocus]}
+                                data={options}
+                                labelField="label"
+                                valueField="value"
+                                placeholder={!isFocus ? 'Select item' : '...'}
+                                maxHeight={300}
+                                value={categoria}
+                                onChange={item => {
+                                    setCategoria(item.value);
+                                }}
+                            />
+                        </View>
                         <View style={styles.barraImagem}>
                             {foto && (
                                 <Image
@@ -165,6 +216,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#D9D9D9',
         
     },
+    listaCategoria: {
+        backgroundColor: '#D9D9D9',
+        zIndex: 1,
+    },
     barraImagem: {
         backgroundColor: '#D9D9D9',
         marginTop: 10,
@@ -205,6 +260,17 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
     },
+
+    // drop
+      label: {
+        position: 'absolute',
+        backgroundColor: '#D9D9D9',
+        left: 22,
+        top: 8,
+        zIndex: 999,
+        paddingHorizontal: 8,
+        fontSize: 14,
+      },
 });
 
 export default NovoProduto;

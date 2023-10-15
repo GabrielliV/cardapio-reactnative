@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 30,
     paddingTop: 40,
-    paddingEnd: 230,
+    paddingEnd: 30,
   },
   itemContainer: {
     flexDirection: 'row',
@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
   },
   nome: {
     fontSize: 20,
+    fontWeight: 'bold',
   },
   botaoListar: {
     backgroundColor: '#3d9467',

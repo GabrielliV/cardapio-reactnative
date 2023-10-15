@@ -15,3 +15,11 @@ export const criaProduto = (nome, descricao, preco, foto, categoriaId) => api.po
     foto,
     categoriaId
 })
+
+export const alteraProduto = (id, nome, descricao, preco, foto, categoriaId) => api.post(`cardapio/produtos/altera/produto/${id}`, {
+    nome,
+    descricao,
+    preco,
+    foto,
+    categoriaId
+})

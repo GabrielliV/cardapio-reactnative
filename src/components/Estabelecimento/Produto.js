@@ -65,7 +65,7 @@ const Produto = () => {
             </TouchableOpacity>
             <TouchableOpacity style={styles.botaoAlterar} 
               onPress={() => {
-                  navigate(`/produto/${listProduto.id}/${listProduto.nome}/${listProduto.descricao}/${listProduto.preco}/${listProduto.categoria.id}/${listProduto.foto}`); 
+                  navigate(`/novoProduto/${listProduto.categoria.id}/${listProduto.id}`); 
               }}
             >
                 <Text style={styles.textoBotao}>Alterar</Text>
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   rightColumn: {
     flex: 1,
     marginLeft: 10,
-    marginEnd: 190,
+    marginEnd: 40,
     alignItems: 'flex-end',
   },
   texto: {
@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
     marginStart:20,
   },
   botaoInativar:{
+    width: 130,
     marginEnd: 40,
     backgroundColor: '#616161',
     paddingHorizontal: 30,
@@ -126,6 +127,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   textoBotao: {
+    textAlign: 'center',
     fontSize: 20,
     color: 'white',
     fontWeight: 'bold',

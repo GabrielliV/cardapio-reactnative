@@ -40,7 +40,7 @@ export default function App() {
               <Route path='/categorias' element={<Categorias />} />
               <Route path='/produtos/:categoriaId/:nome' element={<Produtos />} />
               <Route path='/produto/:id' element={<Produto />} />
-              <Route path='/novoProduto/:categoriaId' element={<NovoProduto />} />
+              <Route path='/novoProduto/:categoriaId/:id?' element={<NovoProduto />} />
               <Route path='/relatorios' element={<Relatorios />} />
               
             </Routes>
