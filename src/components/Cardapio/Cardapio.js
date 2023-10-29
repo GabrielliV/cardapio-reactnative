@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigate } from 'react-router-native';
@@ -24,7 +24,11 @@ const Cardapio = ({ children }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.barraCarrinho}>                      
-          <TouchableOpacity style={styles.botaoCarrinho}> 
+          <TouchableOpacity style={styles.botaoCarrinho}
+            onPress={() => {
+              navigate("/carrinho")
+          }}
+          > 
             <Icon name="shopping-cart" size={30} color="white"/>           
           </TouchableOpacity>
         </View>
@@ -73,7 +77,7 @@ const Cardapio = ({ children }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  container: {    
     flex: 1,
     flexDirection: 'column',
     width: 1280,
@@ -151,7 +155,6 @@ const styles = StyleSheet.create({
   },
   conteudo: {
     flex: 1,
-    backgroundColor: 'white',
     padding: 20,
   },
 });

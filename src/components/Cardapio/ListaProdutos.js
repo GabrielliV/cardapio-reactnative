@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
 import { listaProdutos } from '../../services/Produtos';
 import { useParams } from 'react-router-native';
 import Cardapio from './Cardapio';
+import { CarrinhoContext } from '../../context/CarrinhoContext';
 
 const ListaProdutos = () => {
     const { categoriaId } = useParams();
     const [listProdutos, setListProdutos] = useState([]);
+    const { carrinho, setCarrinho } = useContext(CarrinhoContext);
 
     const adicionarAoCarrinho = (id, nome, preco) => {
         const itemNoCarrinho = carrinho.find((item) => item.id === id);
