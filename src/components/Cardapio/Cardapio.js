@@ -1,5 +1,5 @@
 import React, { useContext} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigate } from 'react-router-native';
 import { AppContext } from '../../context/AppContext';
@@ -15,32 +15,27 @@ const Cardapio = ({ children }) => {
         <View style={styles.barraMesa}>
             <Text style={styles.mesa}>Mesa {appInfo.mesaApp}</Text>
         </View>
-        <View >
-            <Text style={styles.nomeEstabelecimento}>{appInfo.nomeEstabelecimentoApp}</Text>
-        </View>
-        <View style={styles.barraBusca}>            
-          <TouchableOpacity style={styles.botaoBusca}>   
-            <Icon name="search" size={25} color="white"/>         
-          </TouchableOpacity>
-        </View>
-        <View style={styles.barraCarrinho}>                      
-          <TouchableOpacity style={styles.botaoCarrinho}
-            onPress={() => {
-              navigate("/carrinho")
-          }}
-          > 
-            <Icon name="shopping-cart" size={30} color="white"/>           
-          </TouchableOpacity>
-        </View>
-        <View style={styles.barraSair}>
+        <View style={styles.barraEstabelecimento}>
           <TouchableOpacity
             onPress={() => {
                 navigate("/")
             }}
           >
-            <Icon name="close" size={25} color="black"/>    
-          </TouchableOpacity>
+            <Text style={styles.nomeEstabelecimento}>{appInfo.nomeEstabelecimentoApp}</Text>
+          </TouchableOpacity> 
         </View>
+        <View>               
+          <TouchableOpacity style={styles.botaoCarrinho}
+            onPress={() => {
+              navigate("/carrinho")
+          }}
+          > 
+            <View style={styles.barraCarrinho}>
+              <Text style={styles.textCarrinho}>Carrinho</Text>  
+              <Icon name="shopping-cart" size={36} color="#3d9467"/> 
+            </View>          
+          </TouchableOpacity>
+        </View>        
       </View>
 
       <View style={styles.itens}>
@@ -89,7 +84,7 @@ const styles = StyleSheet.create({
   },
   barraSuperior: {
     flexDirection: 'row',
-    backgroundColor: '#D9D9D9',
+    backgroundColor: 'black',
     alignItems: 'center',
     height: 80,
   },
@@ -106,40 +101,27 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   barraEstabelecimento: {
-    width: 200,
+    flex: 1,
   },
   nomeEstabelecimento: {
     paddingLeft: 14,
-    paddingRight:300,
-    fontSize: 18,
-  },
-  buscar: {
-    fontSize: 18,
-    color: 'white',
-  },
-  barraBusca: {
-    backgroundColor: 'black',
-    width: 280,
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  carrinho: {
-    fontSize: 18,
+    paddingRight:380,
+    fontSize: 22,
     color: 'white',
   },
   barraCarrinho: {
-    backgroundColor: '#CD0707',
-    width: 280,
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'row',
   },
-  barraSair: {
-    alignSelf: 'flex',
-    width: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+  textCarrinho: {
+    textAlign: 'center',
+    alignSelf: 'center',
+    color: 'white',
+    fontSize: 20,
+    marginEnd: 14,
+  },
+  botaoCarrinho: {
+    justifyContent: 'flex-end',
+    marginEnd: 80,
   },
   menu: {
     width: 223,

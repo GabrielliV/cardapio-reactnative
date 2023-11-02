@@ -12,7 +12,6 @@ const Relatorio = () => {
     pratosSolicitados(order)
       .then((response) => {
         if (response.data) {
-            console.log(response.data.content);
             setListRelatorio(response.data.content);
         } else {
             console.error('Nenhuma informação encontrada para o relatório.');

@@ -8,20 +8,21 @@ import { CarrinhoContext } from '../../context/CarrinhoContext';
 const ListaProdutos = () => {
     const { categoriaId } = useParams();
     const [listProdutos, setListProdutos] = useState([]);
-    const { carrinho, setCarrinho } = useContext(CarrinhoContext);
+    const { carrinho, adicionarItem } = useContext(CarrinhoContext);
 
     const adicionarAoCarrinho = (id, nome, preco) => {
-        const itemNoCarrinho = carrinho.find((item) => item.id === id);
+      const itemNoCarrinho = carrinho.find((item) => item.id === id);
     
-        if (itemNoCarrinho) {
-          const novoCarrinho = carrinho.map((item) =>
-            item.id === id ? { ...item, quantidade: item.quantidade + 1 } : item
-          );
-          setCarrinho(novoCarrinho);
-        } else {
-          setCarrinho([...carrinho, { id, nome, preco, quantidade: 1 }]);
-        }
-      };
+      if (itemNoCarrinho) {
+        const novoCarrinho = carrinho.map((item) =>
+          item.id === id ? { ...item, quantidade: item.quantidade + 1 } : item
+        );
+        adicionarItem({ carrinho: novoCarrinho });
+      } else {     
+        const novoItem = { id, nome, preco, quantidade: 1 };
+        adicionarItem({ carrinho: [...carrinho, novoItem] });
+      }
+    };
 
     const listarProdutos = () => {
         setListProdutos([]);

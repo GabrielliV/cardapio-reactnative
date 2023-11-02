@@ -70,6 +70,13 @@ const Produto = () => {
             >
                 <Text style={styles.textoBotao}>Alterar</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.botaoVoltar} 
+              onPress={() => {
+                  navigate(`/produtos/${listProduto.categoria.id}/${listProduto.categoria.nome}`); 
+              }}
+            >
+                <Text style={styles.textoBotao}>Voltar</Text>
+            </TouchableOpacity>
         </View>
       </View>
     </Central>
@@ -124,6 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3d9467',
     paddingHorizontal: 30,
     paddingVertical: 5,
+    marginEnd: 40,
     borderRadius: 5,
   },
   textoBotao: {
@@ -132,6 +140,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  botaoVoltar: {
+    backgroundColor: 'black',
+    paddingHorizontal: 30,
+    paddingVertical: 5,
+    borderRadius: 5,
+  }
 });
 
 export default Produto;

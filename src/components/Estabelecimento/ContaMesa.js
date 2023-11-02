@@ -37,18 +37,18 @@ const ContaMesa = () => {
         <View style={styles.container}>
             <Text style={styles.label}>PRODUTO</Text>
             <Text style={styles.labelQtde}>QTDE</Text>
-            <Text style={styles.label}>VALOR UNITÁRIO</Text>
+            <Text style={styles.labelValor}>VALOR UNITÁRIO</Text>
         </View>
         <View style={styles.scrollContainer}>
             <FlatList
                 data={listConta.itensDto}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.itemId}
                 renderItem={({ item }) => (
                 <View style={styles.itens}>
                     <View style={styles.infoContainer}>
-                        <Text style={styles.itemTexto}>{item.nome}</Text>                
-                        <Text style={styles.itemTexto}>{item.qtde}</Text>      
-                        <Text style={styles.itemTexto}>R$ {typeof item.valor === 'number' ? item.valor.toFixed(2).replace('.', ',') : '0,00'}</Text>      
+                        <Text style={styles.itemNome}>{item.nome}</Text>              
+                        <Text style={styles.itemQtde}>{item.qtde}</Text>   
+                        <Text style={styles.itemValor}>R$ {typeof item.valor === 'number' ? item.valor.toFixed(2).replace('.', ',') : '0,00'}</Text>      
                     </View>          
                 </View>
                 )}
@@ -102,9 +102,8 @@ const ContaMesa = () => {
         flex: 0,
     },
     infoContainer: {
-        marginEnd: 200,
-        justifyContent: 'space-between',   
         flexDirection: 'row',
+        justifyContent: 'space-between',           
     },
     label: {    
         fontSize: 18,
@@ -113,9 +112,25 @@ const ContaMesa = () => {
     labelQtde: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginStart: 140,
+        marginStart: 200,
     },
-    itemTexto: {
+    labelValor: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    itemNome: {
+        flex: 1,
+        fontSize: 18,
+        alignSelf: 'flex-start',
+    },
+    itemQtde: {
+        flex: 1,
+        width: 60,
+        fontSize: 18,
+        textAlign: 'center',
+    },
+    itemValor: {
+        marginEnd: 270,
         fontSize: 18,
     },
     botaoFinalizar: {
