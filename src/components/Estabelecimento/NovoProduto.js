@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-native';
 import { criaProduto, produto, alteraProduto } from '../../services/Produtos';
 import * as ImagePicker from 'expo-image-picker';
 import { Dropdown } from 'react-native-element-dropdown';
-// import { SelectList } from 'react-native-dropdown-select-list'
 
 const options = [
     { label: 'Pratos', value: '1' },

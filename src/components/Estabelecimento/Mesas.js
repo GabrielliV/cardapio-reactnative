@@ -13,6 +13,14 @@ const Mesas = () => {
   const [reloadPage, setReloadPage] = useState(false);
   const [cod, setCod] = useState("");
   const [inputMesa, setInputMesa] = useState("");
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  const showAndHideMessage = (message) => {
+    setShowSuccessMessage(message);
+    setTimeout(() => {
+      setShowSuccessMessage('');
+    }, 3000); // 3000 milissegundos = 3 segundos
+  };
 
   const listaMesas = () => {
     listarMesas(estabelecimentoInfo.id)
@@ -83,6 +91,10 @@ const Mesas = () => {
                     ativaInativaMesa(item.id, item.ativo).then(() => {
                       setReloadPage(true);
                     })
+                    .catch((error) => {
+                      console.error('Erro ao mudar status da mesa:', error);
+                      showAndHideMessage('Erro ao criar a mesa');
+                    });
                   }}
                   >
                   <Text style={styles.textoBotao}>{item.ativo}</Text>
@@ -98,21 +110,36 @@ const Mesas = () => {
           <TextInput
             style={styles.mesaInput}
             value={inputMesa}
-            onChangeText={setInputMesa}
+            onChangeText={text => {
+              const formattedText = text.replace(/[^0-9]/g, '');
+              setInputMesa(formattedText);
+            }}
+            keyboardType="numeric"
           />
         
         <TouchableOpacity style={styles.botaoVerde}
           onPress={() => {
-            criaMesa(estabelecimentoInfo.id, inputMesa).then(() => {
-              setReloadPage(true);
-              setInputMesa('');
-              })
+            criaMesa(estabelecimentoInfo.id, inputMesa)
+              .then(() => {
+                  setReloadPage(true);
+                  setInputMesa('');
+                  showAndHideMessage('A mesa foi criada com sucesso');
+                })
+                .catch((error) => {
+                  console.error('Erro ao criar a mesa:', error);
+                  showAndHideMessage('Erro ao criar a mesa');
+              });
             }}
           >
           <Text style={styles.textoBotao}>Criar</Text>
         </TouchableOpacity>
         </View>
       </View>
+      {showSuccessMessage && (
+      <View style={styles.successMessage}>
+        <Text style={styles.successText}>{showSuccessMessage}</Text>
+      </View>
+      )}
     </Central> 
   );
 };
@@ -204,6 +231,23 @@ const styles = StyleSheet.create({
     borderRadius: 5,    
     backgroundColor: '#D9D9D9',
     marginEnd: 8,
+  },
+  successMessage: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: 'black',
+    padding: 12,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  successText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 16,
   },
 });
 

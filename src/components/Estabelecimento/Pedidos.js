@@ -11,11 +11,19 @@ const Pedidos = () => {
   const [listPedidos, setListPedidos] = useState([]);
   const [listTempoMedio, setListTempoMedio] = useState([]);
   const [reloadPage, setReloadPage] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const handlePedidoFinalizado = (pedidoId) => {
     finalizar(pedidoId).then(() => {
       setReloadPage(true);
     });
+  };
+
+  const showAndHideMessage = (message) => {
+    setShowSuccessMessage(message);
+    setTimeout(() => {
+      setShowSuccessMessage('');
+    }, 3000); // 3000 milissegundos = 3 segundos
   };
 
   const listaPedidos = () => {
@@ -78,9 +86,15 @@ const Pedidos = () => {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.botaoFinalizar}
                   onPress={() => {
-                    finalizar(item.id).then(() => {
-                      handlePedidoFinalizado(item.id);
-                    })
+                    finalizar(item.id)
+                      .then(() => {
+                        showAndHideMessage('Pedido finalizado com sucesso');
+                        handlePedidoFinalizado(item.id);                        
+                      })
+                      .catch((error) => {
+                        console.error('Erro ao finalizar o pedido:', error);
+                        showAndHideMessage('Erro ao finalizar o pedido');
+                    });
                 }}
                 >
                   <Text style={styles.textoBotao}>Finalizar</Text>
@@ -93,6 +107,11 @@ const Pedidos = () => {
       <View style={styles.barraTempoMedio}>
         <Text style={styles.textoTempoMedio}>Tempo médio de hoje: {listTempoMedio}</Text>
       </View>
+      {showSuccessMessage && (
+      <View style={styles.successMessage}>
+        <Text style={styles.successText}>{showSuccessMessage}</Text>
+      </View>
+      )}
     </Central> 
   );
 };
@@ -138,6 +157,23 @@ const styles = StyleSheet.create({
   },
   textoTempoMedio: {
     fontSize: 18,
+  },
+  successMessage: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: 'black',
+    padding: 12,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  successText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 16,
   },
 });
  

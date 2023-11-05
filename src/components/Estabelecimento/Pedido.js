@@ -9,6 +9,14 @@ const Pedido = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const [listPedido, setListPedido] = useState([]);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+    const showAndHideMessage = (message) => {
+        setShowSuccessMessage(message);
+        setTimeout(() => {
+          setShowSuccessMessage('');
+        }, 3000); // 3000 milissegundos = 3 segundos
+      };
 
     const listaPedido = () => {
         listarPedido(id)
@@ -54,15 +62,28 @@ const Pedido = () => {
             <Text style={styles.observacao}>{listPedido.observacao}</Text>
                 <TouchableOpacity style={styles.botaoFinalizar} 
                     onPress={() => {
-                        finalizar(listPedido.id).then(() => {
-                            navigate("/pedidos")
+                        finalizar(listPedido.id)
+                        .then(() => {
+                            showAndHideMessage('Pedido finalizado com sucesso');
+                            setTimeout(() => {
+                                navigate("/pedidos");
+                            }, 2000);               
                         })
+                        .catch((error) => {
+                            console.error('Erro ao finalizar o pedido:', error);
+                            showAndHideMessage('Erro ao finalizar o pedido');
+                        });
                     }}
                     >
                     <Text style={styles.textoBotao}>Finalizar</Text>
                 </TouchableOpacity>
             </View>
         </View>
+        {showSuccessMessage && (
+        <View style={styles.successMessage}>
+            <Text style={styles.successText}>{showSuccessMessage}</Text>
+        </View>
+        )}
     </Central> 
   );
 };
@@ -117,7 +138,24 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         marginEnd: 200,
-    }
+    },
+    successMessage: {
+        position: 'absolute',
+        bottom: 30,
+        left: 20,
+        right: 20,
+        backgroundColor: 'black',
+        padding: 12,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      successText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 16,
+      },
   });
   
 
