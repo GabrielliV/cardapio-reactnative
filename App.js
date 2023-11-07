@@ -31,15 +31,15 @@ export default function App() {
 
   return (
     <NativeRouter>
-      <AppContext.Provider value={{ mesaApp: appInfo.mesa, nomeEstabelecimentoApp: appInfo.nomeEstabelecimento, idApp: appInfo.id }}>
+      <AppContext.Provider value={{ mesaApp: appInfo.mesa, mesaIdApp: appInfo.mesa, nomeEstabelecimentoApp: appInfo.nomeEstabelecimento, idApp: appInfo.id }}>
         <EstabelecimentoContext.Provider value={{ nome: estabelecimentoInfo.nome, id: estabelecimentoInfo.id }}>
-          <CarrinhoContext.Provider value={{carrinho: carrinhoInfo.carrinho}}>
+          <CarrinhoContext.Provider value={{carrinho: carrinhoInfo.carrinho, adicionarAoCarrinho: carrinhoInfo.adicionarAoCarrinho, incrementarItem: carrinhoInfo.incrementarItem, decrementarItem: carrinhoInfo.decrementarItem}}>
             <View style={styles.container}>
               <Routes>
                 <Route path='/' element={<Login setMesaApp={appInfo.setMesa} setNomeEstabelecimentoApp={appInfo.setNomeEstabelecimento} setIdApp={appInfo.setId} />} />
                 <Route path='/cardapio' element={<Cardapio />} />
                 <Route path='/listaProdutos/:categoriaId' element={<ListaProdutos />} />
-                <Route path='/carrinho/' element={<Carrinho />}/>
+                <Route path='/carrinho/' element={<Carrinho setMesaIdApp={appInfo.setMesaId} />}/>
                 <Route path='/loginFuncionario' element={<LoginFuncionario setNome={estabelecimentoInfo.setNome} setId={estabelecimentoInfo.setId} />} />
                 <Route path='/pedidos' element={<Pedidos/>} />
                 <Route path='/pedido/:id' element={<Pedido />} />

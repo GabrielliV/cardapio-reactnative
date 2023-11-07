@@ -1,33 +1,58 @@
-import React, { useContext, useState} from 'react';
+import React, { useContext, useState, useEffect} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput } from 'react-native';
 import Cardapio from './Cardapio';
 import { CarrinhoContext } from '../../context/CarrinhoContext';
+import { AppContext } from '../../context/AppContext';
+import { solicitarPedido } from '../../services/Pedidos';
 
 const Carrinho = () => {
-    const { carrinho } = useContext(CarrinhoContext);
+    const { carrinho, incrementarItem, decrementarItem } = useContext(CarrinhoContext);
+    const appInfo = useContext(AppContext);
     const [inputCod, setInputCod] = useState("");
     const [inputObs, setInputObs] = useState("");
+    const [total, setTotal] = useState(0);
+
+    const handlePedido = () => {
+        const itensParaPedido = carrinho.map(item => ({
+            produtoId: item.id,
+            qtde: item.quantidade
+        }));
+
+        solicitarPedido(appInfo.mesaIdApp, inputCod, inputObs, itensParaPedido);
+    };
+
+    useEffect(() => {
+        let novoTotal = 0;
+        carrinho.forEach(item => {
+            const subtotal = item.preco * item.quantidade;
+            novoTotal += subtotal;
+        });
+        setTotal(novoTotal);
+    }, [carrinho]);
 
     return (   
         <Cardapio>
             <View style={styles.container}>
-                <View style={styles.cabecalho}>
-                    <Text style={styles.labelDireita}>PRODUTO</Text>
-                    <Text style={styles.label}>VALOR UNITÁRIO</Text>
-                    <Text style={styles.label}>QTDE</Text>
+                    <View style={styles.cabecalho}>
+                        <Text style={styles.labelDireita}>PRODUTO</Text>
+                        <Text style={styles.label}>VALOR UNITÁRIO</Text>
+                        <Text style={styles.label}>QTDE</Text>
+                    </View>
                 </View>
-                <FlatList
-                    data={carrinho}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => (
-                        <View style={styles.itemCarrinho}>
-                            <Text>{item.nome}</Text>
-                            <Text>{item.quantidade}</Text>
-                            <Text>R$ {item.preco.toFixed(2).replace('.', ',')}</Text>
-                        </View>
-                    )}
-                />
-            </View>
+                <View style={styles.scrollContainer}>
+                    <FlatList
+                        data={carrinho}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({ item }) => (
+                            <View style={styles.itemCarrinho}>
+                                <Text style={styles.itemNome}>{item.nome}</Text>                                
+                                <Text style={styles.itemPreco}>R$ {item.preco.toFixed(2).replace('.', ',')}</Text>
+                                <Text style={styles.itemQuantidade}>{item.quantidade}</Text>
+                            </View>
+                        )}
+                    />
+                </View>
+            
             <View style={styles.containerInferior}>
                 <View style={styles.containerInferiorE}>
                     <View style={styles.containerCod}>
@@ -49,8 +74,8 @@ const Carrinho = () => {
                     </View>
                 </View>
                 <View style={styles.containerInferiorD}>
-                    <Text style={styles.total}>Total: R$ 0,00</Text>
-                    <TouchableOpacity style={styles.botaoPedir}>
+                    <Text style={styles.total}>Total: R$ {total.toFixed(2).replace('.', ',')}</Text>
+                    <TouchableOpacity style={styles.botaoPedir} onPress={handlePedido}>
                         <Text style={styles.textoBotao}>PEDIR</Text>
                     </TouchableOpacity>
                 </View>
@@ -62,13 +87,11 @@ const Carrinho = () => {
 const styles = StyleSheet.create({
     container: {   
         backgroundColor: 'black', 
-        flexDirection: 'row',
         borderRadius: 5,
-        height: 400,
     },
     cabecalho: {
         flexDirection: 'row',
-        padding: 23,
+        padding: 10,
         justifyContent: 'space-between',
         marginLeft: 30,
     },
@@ -83,6 +106,37 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
         marginRight: 150,
+    },
+    scrollContainer: {
+        marginTop: 5,
+        borderRadius: 5,
+        height: 340,
+        maxHeight: 340,
+        backgroundColor: 'black',
+    },
+    itemCarrinho: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingStart: 38,
+        paddingTop: 12,
+    },
+    itemNome: {
+        flex: 2,
+        fontSize: 18,
+        color: 'white',
+    },
+    itemPreco: {
+        flex: 1,
+        fontSize: 18,
+        color: 'white',
+        textAlign: 'center',
+    },
+    itemQuantidade: {
+        flex: 1,
+        fontSize: 18,
+        color: 'white',
+        textAlign: 'center', 
     },
     containerInferior: {
         flex: 1,

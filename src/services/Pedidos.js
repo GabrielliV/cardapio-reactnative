@@ -11,3 +11,13 @@ export const listarPedidoMesa = (mesaId) => api.get(`cardapio/pedidos/mesa/${mes
 export const listarPedidoCod = (cod) => api.get(`cardapio/pedidos/cod/${cod}`)
 
 export const finalizar = (pedidoId) => api.post(`cardapio/pedidos/finalizar/${pedidoId}`)
+
+export const solicitarPedido = (mesaId, cod, observacao, listaPedidos) => api.post(`cardapio/pedidos/solicitar`, {
+    mesaId,
+    cod,
+    observacao,
+    pedidoItem: listaPedidos.map(item => ({
+        produtoId: item.produtoId,
+        qtde: item.qtde
+    }))
+})

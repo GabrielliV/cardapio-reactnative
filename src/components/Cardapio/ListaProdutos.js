@@ -8,21 +8,7 @@ import { CarrinhoContext } from '../../context/CarrinhoContext';
 const ListaProdutos = () => {
     const { categoriaId } = useParams();
     const [listProdutos, setListProdutos] = useState([]);
-    const { carrinho, adicionarItem } = useContext(CarrinhoContext);
-
-    const adicionarAoCarrinho = (id, nome, preco) => {
-      const itemNoCarrinho = carrinho.find((item) => item.id === id);
-    
-      if (itemNoCarrinho) {
-        const novoCarrinho = carrinho.map((item) =>
-          item.id === id ? { ...item, quantidade: item.quantidade + 1 } : item
-        );
-        adicionarItem({ carrinho: novoCarrinho });
-      } else {     
-        const novoItem = { id, nome, preco, quantidade: 1 };
-        adicionarItem({ carrinho: [...carrinho, novoItem] });
-      }
-    };
+    const { adicionarAoCarrinho } = useContext(CarrinhoContext);
 
     const listarProdutos = () => {
         setListProdutos([]);
@@ -69,79 +55,65 @@ const ListaProdutos = () => {
               </View>
             )}
           />
-          {/* <View style={styles.conteudoCarrinho}>
-            <FlatList
-              data={carrinho}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <Text>
-                  Item ID: {item.id}, Nome: {item.nome}, Preço: {item.preco}, Quantidade: {item.quantidade}
-                </Text>
-              )}
-            />
-          </View> */}
         </View>
         </Cardapio>
     )
 };
 
 const styles = StyleSheet.create({
-    
-    
-      // Produtos
-      produtoContainer: {
-        marginBottom: 20,
-        borderWidth: 1,
-        padding: 10,
-        borderRadius: 5,
-        backgroundColor: 'black',
-        color: 'white',
-        flexDirection: 'row',
-      },
-      grupoEsquerdo: {
-        flexDirection: 'column',
-      },
-      grupoCentro: {
-        flex: 1,
-        marginTop: 10,
-      },
-      grupoDireito: {
-        marginRight: 20,
-      },
-      imagemProduto: {
-        width: 170,
-        height: 170,
-        marginStart: 10,
-        marginEnd: 20,
-        borderRadius: 1,
-      },
-      nomeProduto: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: 'white',
-      },
-      descricaoProduto: {
-        fontSize: 20,
-        color: 'white',
-      },
-      precoProduto: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'white',
-        alignSelf: 'flex-end',
-        marginTop: 30,
-      },
-      botaoAdicionar: {
-        backgroundColor: '#3d9467',
-        padding: 10,
-        borderRadius: 5,
-        marginTop: 45,
-        alignSelf: 'flex-end',
-      },
-      textoBotao: {
-        color: 'white',
-        textAlign: 'center',
-      },
+  produtoContainer: {
+    marginBottom: 20,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: 'black',
+    color: 'white',
+    flexDirection: 'row',
+  },
+  grupoEsquerdo: {
+    flexDirection: 'column',
+  },
+  grupoCentro: {
+    flex: 1,
+    marginTop: 10,
+  },
+  grupoDireito: {
+    marginRight: 20,
+  },
+  imagemProduto: {
+    width: 170,
+    height: 170,
+    marginStart: 10,
+    marginEnd: 20,
+    borderRadius: 1,
+  },
+  nomeProduto: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  descricaoProduto: {
+    fontSize: 20,
+    color: 'white',
+  },
+  precoProduto: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+    alignSelf: 'flex-end',
+    marginTop: 30,
+  },
+  botaoAdicionar: {
+    backgroundColor: '#3d9467',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 45,
+    alignSelf: 'flex-end',
+  },
+  textoBotao: {
+    color: 'white',
+    textAlign: 'center',
+  },
 });
 
 export default ListaProdutos;
