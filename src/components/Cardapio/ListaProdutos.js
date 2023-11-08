@@ -9,54 +9,67 @@ const ListaProdutos = () => {
     const { categoriaId } = useParams();
     const [listProdutos, setListProdutos] = useState([]);
     const { adicionarAoCarrinho } = useContext(CarrinhoContext);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     const listarProdutos = () => {
-        setListProdutos([]);
+      setListProdutos([]);
 
-        listaProdutos(categoriaId)
-          .then((response) => {
-            if (response.data && Array.isArray(response.data)) {
-              setListProdutos(response.data);
-            } else {
-              console.error('Nenhum produto encontrado na categoria.');
-            }
-          })
-          .catch((error) => {
-            console.error('Erro ao buscar produtos:', error);
-          });
-      };
+      listaProdutos(categoriaId)
+        .then((response) => {
+          if (response.data && Array.isArray(response.data)) {
+            setListProdutos(response.data);
+          } else {
+            console.error('Nenhum produto encontrado na categoria.');
+          }
+        })
+        .catch((error) => {
+          console.error('Erro ao buscar produtos:', error);
+        });
+    };
+
+    const showAndHideMessage = (message) => {
+      setShowSuccessMessage(message);
+      setTimeout(() => {
+        setShowSuccessMessage('');
+      }, 3000); // 3000 milissegundos = 3 segundos
+    };
     
-      useEffect(() => {
-        listarProdutos(categoriaId);
-      }, [categoriaId]);
+    useEffect(() => {
+      listarProdutos(categoriaId);
+    }, [categoriaId]);
 
     return (   
-        <Cardapio>
+      <Cardapio>
         <View>
-        <FlatList
-            data={listProdutos}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.produtoContainer}>
-                <View style={styles.grupoEsquerdo}>
-                  <Image source={{ uri: item.foto }} style={styles.imagemProduto} />
+          <FlatList
+              data={listProdutos}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View style={styles.produtoContainer}>
+                  <View style={styles.grupoEsquerdo}>
+                    <Image source={{ uri: item.foto }} style={styles.imagemProduto} />
+                  </View>
+                  <View style={styles.grupoCentro}>
+                    <Text style={styles.nomeProduto}>{item.nome}</Text>
+                    <Text style={styles.descricaoProduto}>{item.descricao}</Text>
+                  </View>
+                  <View style={styles.grupoDireito}>
+                    <Text style={styles.precoProduto}>R$ {typeof item.preco === 'number' ? item.preco.toFixed(2).replace('.', ',') : '0,00'}</Text>
+                    <TouchableOpacity style={styles.botaoAdicionar} onPress={
+                      () => adicionarAoCarrinho(item.id, item.nome, item.preco)}>
+                      <Text style={styles.textoBotao}>Adicionar ao carrinho</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View style={styles.grupoCentro}>
-                  <Text style={styles.nomeProduto}>{item.nome}</Text>
-                  <Text style={styles.descricaoProduto}>{item.descricao}</Text>
-                </View>
-                <View style={styles.grupoDireito}>
-                  <Text style={styles.precoProduto}>R$ {typeof item.preco === 'number' ? item.preco.toFixed(2).replace('.', ',') : '0,00'}</Text>
-                  <TouchableOpacity style={styles.botaoAdicionar} onPress={
-                    () => adicionarAoCarrinho(item.id, item.nome, item.preco)}>
-                    <Text style={styles.textoBotao}>Adicionar ao carrinho</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-          />
+              )}
+            />
         </View>
-        </Cardapio>
+        {showSuccessMessage && (
+          <View style={styles.successMessage}>
+            <Text style={styles.successText}>{showSuccessMessage}</Text>
+          </View>
+        )}
+      </Cardapio>
     )
 };
 

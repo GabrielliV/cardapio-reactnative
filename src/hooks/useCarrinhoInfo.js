@@ -14,7 +14,6 @@ export const useCarrinhoInfo = () => {
             const novoItem = { id, nome, preco, quantidade: 1 };
             setCarrinho([...carrinho, novoItem]);
         }
-        console.log(carrinho);
       };
 
       incrementarItem = (id) => {

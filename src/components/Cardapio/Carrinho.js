@@ -7,12 +7,17 @@ import { solicitarPedido } from '../../services/Pedidos';
 
 const Carrinho = () => {
     const { carrinho, incrementarItem, decrementarItem } = useContext(CarrinhoContext);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const appInfo = useContext(AppContext);
     const [inputCod, setInputCod] = useState("");
     const [inputObs, setInputObs] = useState("");
     const [total, setTotal] = useState(0);
 
     const handlePedido = () => {
+        if (inputCod.trim() == "") {
+            return;
+        }
+
         const itensParaPedido = carrinho.map(item => ({
             produtoId: item.id,
             qtde: item.quantidade
@@ -20,6 +25,27 @@ const Carrinho = () => {
 
         solicitarPedido(appInfo.mesaIdApp, inputCod, inputObs, itensParaPedido);
     };
+
+    const showAndHideMessage = (message) => {
+        setShowSuccessMessage(message);
+        setTimeout(() => {
+          setShowSuccessMessage('');
+        }, 3000); // 3000 milissegundos = 3 segundos
+    };
+
+    const ItemQuantidade = ({ quantidade, incrementarItem, decrementarItem }) => {
+        return (
+          <View style={styles.containerQuantidade}>
+            <TouchableOpacity style={styles.botaoQuantidade} onPress={decrementarItem}>
+              <Text style={styles.textoQtde}>-</Text>
+            </TouchableOpacity>
+            <Text style={styles.textoQuantidade}>{quantidade}</Text>
+            <TouchableOpacity style={styles.botaoQuantidade} onPress={incrementarItem}>
+              <Text style={styles.textoQtde}>+</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      };
 
     useEffect(() => {
         let novoTotal = 0;
@@ -33,25 +59,29 @@ const Carrinho = () => {
     return (   
         <Cardapio>
             <View style={styles.container}>
-                    <View style={styles.cabecalho}>
-                        <Text style={styles.labelDireita}>PRODUTO</Text>
-                        <Text style={styles.label}>VALOR UNITÁRIO</Text>
-                        <Text style={styles.label}>QTDE</Text>
-                    </View>
+                 <View style={styles.cabecalho}>
+                    <Text style={styles.labelDireita}>PRODUTO</Text>
+                    <Text style={styles.label}>VALOR UNITÁRIO</Text>
+                    <Text style={styles.label}>QTDE</Text>
                 </View>
-                <View style={styles.scrollContainer}>
-                    <FlatList
-                        data={carrinho}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                            <View style={styles.itemCarrinho}>
-                                <Text style={styles.itemNome}>{item.nome}</Text>                                
+            </View>
+            <View style={styles.scrollContainer}>
+                <FlatList
+                    data={carrinho}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <View style={styles.itemCarrinho}>
+                            <Text style={styles.itemNome}>{item.nome}</Text>                             
                                 <Text style={styles.itemPreco}>R$ {item.preco.toFixed(2).replace('.', ',')}</Text>
-                                <Text style={styles.itemQuantidade}>{item.quantidade}</Text>
-                            </View>
-                        )}
-                    />
-                </View>
+                                <ItemQuantidade
+                                    quantidade={item.quantidade}
+                                    incrementarItem={() => incrementarItem(item.id)}
+                                    decrementarItem={() => decrementarItem(item.id)}
+                                /> 
+                        </View>
+                    )}
+                />
+            </View>
             
             <View style={styles.containerInferior}>
                 <View style={styles.containerInferiorE}>
@@ -119,24 +149,48 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingStart: 38,
-        paddingTop: 12,
+        paddingTop: 14,
+        marginEnd: 50,
     },
     itemNome: {
-        flex: 2,
+        width: 480,
         fontSize: 18,
         color: 'white',
+    },
+    containerQuantidade: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     itemPreco: {
         flex: 1,
         fontSize: 18,
         color: 'white',
         textAlign: 'center',
+        alignItems: 'center',
+        marginEnd: 45,
     },
     itemQuantidade: {
-        flex: 1,
+        marginHorizontal: 30,
         fontSize: 18,
         color: 'white',
         textAlign: 'center', 
+    },
+    botaoQuantidade: {
+        backgroundColor: '#DCDCDC',
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        margin: 5,
+    },
+    textoQtde: {
+        color: 'black',
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    textoQuantidade: {
+        color: 'white',
+        fontSize: 18,
+        marginHorizontal: 10,
     },
     containerInferior: {
         flex: 1,
