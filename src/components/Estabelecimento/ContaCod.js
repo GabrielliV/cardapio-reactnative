@@ -10,6 +10,7 @@ const ContaCod = () => {
     const navigate = useNavigate();
     const { cod } = useParams();
     const [listConta, setListConta] = useState([]);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     const listaConta = () => {
         listarPedidoCod(cod)
@@ -25,9 +26,16 @@ const ContaCod = () => {
         });
     };
 
-  useEffect(() => {
-    listaConta();
-  }, []);
+    const showAndHideMessage = (message) => {
+        setShowSuccessMessage(message);
+        setTimeout(() => {
+          setShowSuccessMessage('');
+        }, 3000); // 3000 milissegundos = 3 segundos
+    };
+
+    useEffect(() => {
+        listaConta();
+    }, []);
   
     return (   
       <Central>
@@ -42,7 +50,7 @@ const ContaCod = () => {
         <View style={styles.scrollContainer}>
             <FlatList
                 data={listConta.itensDto}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.itemId}
                 renderItem={({ item }) => (
                 <View style={styles.itens}>
                     <View style={styles.infoContainer}>
@@ -61,7 +69,10 @@ const ContaCod = () => {
                 <TouchableOpacity style={styles.botaoFinalizar}
                     onPress={() => {
                         finalizarContaCod(cod).then(() => {
-                            navigate("/mesas")
+                            showAndHideMessage('Conta finalizada.');
+                            setTimeout(() => {
+                                navigate("/mesas")
+                            }, 2000);                            
                         })
                     }}
                     >
@@ -69,6 +80,11 @@ const ContaCod = () => {
                 </TouchableOpacity>
             </View>
         </View>
+        {showSuccessMessage && (
+          <View style={styles.successMessage}>
+            <Text style={styles.successText}>{showSuccessMessage}</Text>
+          </View>
+        )}
       </Central> 
     );
   };
@@ -134,7 +150,24 @@ const ContaCod = () => {
         justifyContent: 'space-between',
         flexDirection: 'row',
         marginEnd: 200,
-    }
+    },
+    successMessage: {
+        position: 'absolute',
+        bottom: 10,
+        left: 20,
+        right: 20,
+        backgroundColor: '#3d9467',
+        padding: 12,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    successText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 16,
+    },
   });
 
   export default ContaCod;

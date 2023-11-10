@@ -24,6 +24,7 @@ function LoginFuncionario({setNome, setId}) {
             placeholder="Identificador"
             value={identificador}
             onChangeText={setIdentificador}
+            secureTextEntry={true}
           />
         </View>
         <View style={styles.inferior}>

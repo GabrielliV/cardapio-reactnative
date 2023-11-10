@@ -26,6 +26,7 @@ function Login({setMesaApp, setNomeEstabelecimentoApp, setIdApp}) {
             placeholder="Identificador"
             value={identificador}
             onChangeText={setIdentificador}
+            secureTextEntry={true}
           />
           <TextInput
             style={styles.mesaField}

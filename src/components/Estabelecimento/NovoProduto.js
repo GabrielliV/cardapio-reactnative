@@ -25,6 +25,7 @@ const NovoProduto = () => {
     const [preco, setPreco] = useState("");
     const [categoria, setCategoria] = useState("");
     const [isFocus, setIsFocus] = useState(false);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const [foto, setFoto] = useState('https://img2.freepng.es/20180426/wde/kisspng-computer-icons-photography-deliver-to-home-5ae20efe8d1a86.899608641524764414578.jpg');
 
     const handleSelectImage = async () => {
@@ -46,6 +47,13 @@ const NovoProduto = () => {
             const base64Image = `data:${selectedImage.type};base64,${selectedImage.base64}`;
             setFoto(base64Image);
         }
+    };
+
+    const showAndHideMessage = (message) => {
+        setShowSuccessMessage(message);
+        setTimeout(() => {
+          setShowSuccessMessage('');
+        }, 3000); // 3000 milissegundos = 3 segundos
     };
 
     useEffect(() => {
@@ -79,13 +87,17 @@ const NovoProduto = () => {
             .then((response) => {
                 if (response.data) {
                     console.log(response.data);
-                    navigate(`/produto/${response.data}`);
+                    showAndHideMessage('Produto criado com sucesso.');
+                    setTimeout(() => {
+                        navigate(`/produto/${response.data}`);
+                    }, 2000);                        
                 } else {
-                    console.error('Nenhum produto foi encontrado');
+                    console.error('Erro ao listar produto.');  
                 }
             })
             .catch((error) => {
                 console.error('Erro ao criar produto:', error);
+                showAndHideMessage('Erro ao criar produto.');
             });
         } else {
             const precoDouble = formatPriceToSend(preco.toString());
@@ -93,13 +105,17 @@ const NovoProduto = () => {
             alteraProduto(id, nome, descricao, precoDouble, foto, categoria)
             .then((response) => {
                 if (response.data) {
-                    navigate(`/produto/${id}`);
+                    showAndHideMessage('Produto alterado com sucesso.');
+                    setTimeout(() => {
+                        navigate(`/produto/${id}`);
+                    }, 2000);                   
                 } else {
-                    console.error('Nenhum produto foi encontrado');
+                    console.error('Erro ao listar produto.');
                 }
             })
             .catch((error) => {
                 console.error('Erro ao alterar produto:', error);
+                showAndHideMessage('Erro ao alterar produto.');
             });
         }
         
@@ -172,12 +188,17 @@ const NovoProduto = () => {
                         <TouchableOpacity style={styles.botaoSalvar}
                             onPress={() => {
                                 enviarProduto()
-                              }}
+                            }}
                         >
                             <Text style={styles.textoBotao}>Salvar</Text>
                         </TouchableOpacity>
                     </View>
             </View>
+            {showSuccessMessage && (
+            <View style={styles.successMessage}>
+                <Text style={styles.successText}>{showSuccessMessage}</Text>
+            </View>
+            )}
         </Central>
     );
 };
@@ -261,7 +282,7 @@ const styles = StyleSheet.create({
     },
 
     // drop
-      label: {
+    label: {
         position: 'absolute',
         backgroundColor: '#D9D9D9',
         left: 22,
@@ -269,7 +290,24 @@ const styles = StyleSheet.create({
         zIndex: 999,
         paddingHorizontal: 8,
         fontSize: 14,
-      },
+    },
+    successMessage: {
+        position: 'absolute',
+        bottom: 20,
+        left: 20,
+        right: 20,
+        backgroundColor: 'black',
+        padding: 12,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+      successText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 16,
+    },    
 });
 
 export default NovoProduto;

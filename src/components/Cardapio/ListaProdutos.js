@@ -55,8 +55,10 @@ const ListaProdutos = () => {
                   </View>
                   <View style={styles.grupoDireito}>
                     <Text style={styles.precoProduto}>R$ {typeof item.preco === 'number' ? item.preco.toFixed(2).replace('.', ',') : '0,00'}</Text>
-                    <TouchableOpacity style={styles.botaoAdicionar} onPress={
-                      () => adicionarAoCarrinho(item.id, item.nome, item.preco)}>
+                    <TouchableOpacity style={styles.botaoAdicionar} onPress={() => {
+                      adicionarAoCarrinho(item.id, item.nome, item.preco);
+                      showAndHideMessage('Produto adicionado ao carrinho.');
+                    }}>
                       <Text style={styles.textoBotao}>Adicionar ao carrinho</Text>
                     </TouchableOpacity>
                   </View>
@@ -126,6 +128,23 @@ const styles = StyleSheet.create({
   textoBotao: {
     color: 'white',
     textAlign: 'center',
+  },
+  successMessage: {
+    position: 'absolute',
+    bottom: 10,
+    left: 20,
+    right: 20,
+    backgroundColor: '#3d9467',
+    padding: 12,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  successText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 16,
   },
 });
 

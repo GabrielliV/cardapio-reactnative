@@ -76,27 +76,41 @@ const Mesas = () => {
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <View style={styles.itens}>
-                <Text style={styles.texto}>Mesa {item.mesa}</Text>
-                <Text style={styles.texto}>{item.status}</Text>
-                <TouchableOpacity style={styles.botaoVerde}
+                <Text style={styles.textoMesa}>Mesa {item.mesa}</Text>
+                <Text style={styles.textoStatus}>{item.status}</Text>
+                <TouchableOpacity
+                  style={
+                    item.status !== 'Ocupada'
+                      ? [styles.botaoVerde, { backgroundColor: '#4F4F4F', opacity: 0.5 }]
+                      : styles.botaoVerde
+                  }
                   onPress={() => {
-                    navigate(`/contaMesa/${item.id}/${item.mesa}`); 
+                    if (item.status === 'Ocupada') {
+                      navigate(`/contaMesa/${item.id}/${item.mesa}`);
+                    }
                   }}
+                  disabled={item.status !== 'Ocupada'}
                 >
                   <Text style={styles.textoBotao}>Ver conta</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.botaoAtivo}
+                <TouchableOpacity
+                  style={
+                    item.ativo === 'Inativar'
+                      ? [styles.botaoAtivo, { backgroundColor: '#CD0707' }]
+                      : [styles.botaoAtivo, { backgroundColor: '#3d9467' }]
+                  }
                   onPress={() => {
-                    ativaInativaMesa(item.id, item.ativo).then(() => {
-                      setReloadPage(true);
-                    })
-                    .catch((error) => {
-                      console.error('Erro ao mudar status da mesa:', error);
-                      showAndHideMessage('Erro ao criar a mesa');
-                    });
+                    ativaInativaMesa(item.id, item.ativo)
+                      .then(() => {
+                        setReloadPage(true);
+                      })
+                      .catch((error) => {
+                        console.error('Erro ao mudar status da mesa:', error);
+                        showAndHideMessage('Erro ao mudar status da mesa.');
+                      });
                   }}
-                  >
+                >
                   <Text style={styles.textoBotao}>{item.ativo}</Text>
                 </TouchableOpacity>
               </View>
@@ -156,7 +170,11 @@ const styles = StyleSheet.create({
     maxHeight: 495,
     flex: 0,
   },
-  texto: {
+  textoMesa: {
+    fontSize: 18,
+    width: 80,
+  },
+  textoStatus: {
     fontSize: 18,
   },
   botaoAtivo: {

@@ -10,6 +10,7 @@ const ContaMesa = () => {
     const navigate = useNavigate();
     const { id, mesa } = useParams();
     const [listConta, setListConta] = useState([]);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     const listaConta = () => {
         listarPedidoMesa(id)
@@ -25,9 +26,16 @@ const ContaMesa = () => {
         });
     };
 
-  useEffect(() => {
-    listaConta();
-  }, []);
+    const showAndHideMessage = (message) => {
+        setShowSuccessMessage(message);
+        setTimeout(() => {
+          setShowSuccessMessage('');
+        }, 3000); // 3000 milissegundos = 3 segundos
+    };
+
+    useEffect(() => {
+        listaConta();
+    }, []);
   
     return (   
       <Central>
@@ -68,7 +76,10 @@ const ContaMesa = () => {
                 <TouchableOpacity style={styles.botaoFinalizar}
                     onPress={() => {
                         finalizarConta(id).then(() => {
-                            navigate("/mesas")
+                            showAndHideMessage('Conta finalizada.');
+                            setTimeout(() => {
+                                navigate("/mesas")
+                            }, 2000); 
                         })
                     }}
                     >
@@ -76,6 +87,11 @@ const ContaMesa = () => {
                 </TouchableOpacity>
             </View>
         </View>
+        {showSuccessMessage && (
+          <View style={styles.successMessage}>
+            <Text style={styles.successText}>{showSuccessMessage}</Text>
+          </View>
+        )}
       </Central> 
     );
   };
@@ -163,7 +179,24 @@ const ContaMesa = () => {
         justifyContent: 'space-between',
         flexDirection: 'row',
         marginEnd: 200,
-    }
+    },
+    successMessage: {
+        position: 'absolute',
+        bottom: 40,
+        left: 20,
+        right: 20,
+        backgroundColor: '#3d9467',
+        padding: 12,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    successText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 16,
+    },
   });
 
   export default ContaMesa;
