@@ -1,18 +1,32 @@
 import React, { useContext, useState, useEffect} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Modal } from 'react-native';
 import Cardapio from './Cardapio';
 import { CarrinhoContext } from '../../context/CarrinhoContext';
 import { AppContext } from '../../context/AppContext';
 import { solicitarPedido } from '../../services/Pedidos';
+import { Button } from 'react-native-elements';
+import { useNavigate } from 'react-router-native';
 
 const Carrinho = () => {
-    const { carrinho, incrementarItem, decrementarItem } = useContext(CarrinhoContext);
+    const { carrinho, incrementarItem, decrementarItem, limparCarrinho } = useContext(CarrinhoContext);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const appInfo = useContext(AppContext);
     const [inputCod, setInputCod] = useState("");
     const [inputObs, setInputObs] = useState("");
     const [total, setTotal] = useState(0);
+    const [isPedidoEnabled, setIsPedidoEnabled] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const navigate = useNavigate();
 
+    const handleNavigate = () => {
+        if (modalVisible) {
+          setModalVisible(false);
+          handlePedido();
+        } else {
+          setModalVisible(true);
+        }
+      };
+    
     const handlePedido = () => {
         if (inputCod.trim() == "") {
             return;
@@ -24,12 +38,19 @@ const Carrinho = () => {
         }));
 
         solicitarPedido(appInfo.mesaIdApp, inputCod, inputObs, itensParaPedido);
+
+        showAndHideMessage('Pedido finalizado com sucesso!');
+
+        setTimeout(() => {
+            limparCarrinho();
+            navigate("/listaProdutos/1");
+        }, 2000);
     };
 
     const showAndHideMessage = (message) => {
         setShowSuccessMessage(message);
         setTimeout(() => {
-          setShowSuccessMessage('');
+            setShowSuccessMessage('');
         }, 3000); // 3000 milissegundos = 3 segundos
     };
 
@@ -53,22 +74,30 @@ const Carrinho = () => {
             const subtotal = item.preco * item.quantidade;
             novoTotal += subtotal;
         });
+
         setTotal(novoTotal);
+
+        setIsPedidoEnabled(carrinho.length > 0);
     }, [carrinho]);
 
     return (   
-        <Cardapio>
-            <View style={styles.container}>
+        <Cardapio >
+            <View style={[styles.container, modalVisible && { backgroundColor: 'rgba(0, 0, 0, 0.8)'}]}>
                  <View style={styles.cabecalho}>
                     <Text style={styles.labelDireita}>PRODUTO</Text>
                     <Text style={styles.label}>VALOR UNITÁRIO</Text>
                     <Text style={styles.label}>QTDE</Text>
                 </View>
             </View>
-            <View style={styles.scrollContainer}>
+            <View style={[styles.scrollContainer, modalVisible && { backgroundColor: 'rgba(0, 0, 0, 0.8)'}]}>
                 <FlatList
                     data={carrinho}
                     keyExtractor={(item) => item.id.toString()}
+                    ListEmptyComponent={() => (
+                        <View style={styles.emptyCartContainer}>
+                            <Text style={styles.emptyCartText}>O carrinho está vazio &#128577;</Text>
+                        </View>
+                    )}
                     renderItem={({ item }) => (
                         <View style={styles.itemCarrinho}>
                             <Text style={styles.itemNome}>{item.nome}</Text>                             
@@ -82,33 +111,66 @@ const Carrinho = () => {
                     )}
                 />
             </View>
-            
-            <View style={styles.containerInferior}>
-                <View style={styles.containerInferiorE}>
-                    <View style={styles.containerCod}>
-                        <Text style={styles.cod}>Cód.</Text>
-                        <TextInput
-                            style={styles.codInput}
-                            value={inputCod}
-                            onChangeText={setInputCod}
-                        />                
-                    </View>
-                    <View style={styles.containerObs}>
-                        <Text>* Inclua seu código de acesso da comanda</Text>
-                        <Text style={styles.obs}>Observação</Text>
-                        <TextInput
-                            style={styles.obsInput}
-                            value={inputObs}
-                            onChangeText={setInputObs}
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                setModalVisible(false);
+                }}
+            >
+                <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalText}>Informe o código da comanda: </Text>
+                    <TextInput
+                        style={styles.codInput}
+                        value={inputCod}
+                        onChangeText={setInputCod}
+                    />     
+                    <View style={styles.modalContainerButton}>                    
+                        <Button
+                            title="Cancelar"
+                            onPress={() => setModalVisible(false)}
+                            buttonStyle={styles.modalButton}
+                        />
+                        <Button
+                            title="Pedir"
+                            onPress={handlePedido}
+                            buttonStyle={styles.modalButton}
                         />
                     </View>
                 </View>
-                <View style={styles.containerInferiorD}>
+                </View>
+            </Modal>
+            
+            <View style={styles.containerInferior}>
+                <View style={styles.containerObs}>
+                    <Text style={styles.obs}>Observação do pedido:</Text>
+                    <TextInput
+                        style={[styles.obsInput, modalVisible && { backgroundColor: 'rgba(0, 0, 0, 0.8)'}]}
+                        value={inputObs}
+                        onChangeText={setInputObs}
+                    />
+                </View>
+                <View style={styles.containerInferiorFinalizar}>
                     <Text style={styles.total}>Total: R$ {total.toFixed(2).replace('.', ',')}</Text>
-                    <TouchableOpacity style={styles.botaoPedir} onPress={handlePedido}>
+                    <TouchableOpacity
+                        style={[
+                            styles.botaoPedir,
+                            { backgroundColor: isPedidoEnabled ? '#3d9467' : '#616161' },
+                        ]}
+                        onPress={handleNavigate}
+                        disabled={!isPedidoEnabled}
+                    >
                         <Text style={styles.textoBotao}>PEDIR</Text>
                     </TouchableOpacity>
                 </View>
+                {showSuccessMessage && (
+                <View style={styles.successMessage}>
+                    <Text style={styles.successText}>{showSuccessMessage}</Text>
+                </View>
+                )}
             </View>
         </Cardapio>
     )
@@ -140,9 +202,20 @@ const styles = StyleSheet.create({
     scrollContainer: {
         marginTop: 5,
         borderRadius: 5,
-        height: 340,
-        maxHeight: 340,
+        height: 420,
+        maxHeight: 420,
         backgroundColor: 'black',
+    },
+    emptyCartContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 180,
+    },
+    emptyCartText: {
+        fontSize: 20,
+        color: 'white',
+        textAlign: 'center',
     },
     itemCarrinho: {
         flexDirection: 'row',
@@ -196,35 +269,10 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
     },
-    containerInferiorE: {
-        height: 500,
-        width: 600,
-    },
-    containerInferiorD: {
-        height: 500,
-        width: 400,
+    containerInferiorFinalizar: {
         flexDirection: 'column',
-    },
-    containerCod: {
-        flexDirection: 'row',
-        marginLeft: 10,
-    },
-    cod: {
-        marginTop: 15,
-        fontSize: 18,
-        marginRight: 10,
-        fontWeight: 'bold',
-    },
-    codInput: {
-        marginTop: 10,
-        width: 220,
-        height: 38,
-        fontSize: 18,
-        padding: 8,
-        borderRadius: 5,    
-        backgroundColor: 'black',
-        marginEnd: 8,
-        color: 'white',
+        justifyContent: 'flex-end',
+        marginStart: 200,
     },
     containerObs: {
         flexDirection: 'column',
@@ -250,24 +298,79 @@ const styles = StyleSheet.create({
     total: {
         fontSize: 18,
         marginLeft: 30,
-        marginTop: 140,
+        marginTop: 25,
         fontWeight: 'bold',
+        alignSelf: 'flex-end'
     },
     botaoPedir: {
         backgroundColor: '#3d9467',
         marginLeft: 30,
         padding: 10,
         borderRadius: 5,
-        marginTop: 20,
+        marginTop: 10,
         width: 240,
-        
     },
     textoBotao: {
         color: 'white',
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
-    }
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 4,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    modalContainerButton: {
+        flexDirection: 'row',
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+        fontSize: 18,
+    },
+    modalButton: {
+        marginTop: 10,
+        marginHorizontal: 20,
+        paddingHorizontal: 20,
+        backgroundColor: '#3d9467',
+    },
+    codInput: {
+        width: 220,
+        height: 38,
+        fontSize: 18,
+        padding: 8,
+        borderRadius: 5,    
+        backgroundColor: 'black',
+        marginEnd: 8,
+        color: 'white',
+        marginBottom: 20,
+    },
+    successMessage: {
+        position: 'absolute',
+        top: 20,
+        left: 20,
+        right: 20,
+        backgroundColor: '#3d9467',
+        padding: 12,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    successText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 16,
+    },
 }); 
 
 
