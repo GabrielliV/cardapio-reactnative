@@ -7,6 +7,14 @@ function LoginFuncionario({setNome, setId}) {
   const navigate = useNavigate();
   const [login, setLogin] = useState("");
   const [identificador, setIdentificador] = useState("");
+  const [showMessage, setShowMessage] = useState(false);
+
+  const showAndHideMessage = (message) => {
+    setShowMessage(message);
+    setTimeout(() => {
+      setShowMessage('');
+    }, 3000); // 3000 milissegundos = 3 segundos
+  };
 
   return (
     <View style={styles.loginContainer}>
@@ -33,17 +41,31 @@ function LoginFuncionario({setNome, setId}) {
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={styles.customButton} onPress={() => {
-              loginFuncionario(login, identificador).then((response) => {
-                setId(response.data.id)
-                setNome(response.data.nome) 
-                navigate("/pedidos")
-              })
+            style={styles.customButton} 
+            onPress={() => {
+              loginFuncionario(login, identificador)
+                .then((response) => {
+                  setId(response.data.id)
+                  setNome(response.data.nome) 
+                  navigate("/pedidos")
+                })
+                .catch((error) => {
+                  if (error.response && error.response.status === 500) {
+                    showAndHideMessage('Login ou Identificador incorreto.');
+                  } else {
+                    showAndHideMessage('Todos os campos devem ser preenchidos.');
+                  }
+                });
             }}>
               <Text style={styles.buttonText}>ENTRAR</Text>
             </TouchableOpacity>
           </View>
       </View>
+      {showMessage && (
+      <View style={styles.message}>
+        <Text style={styles.messageText}>{showMessage}</Text>
+      </View>
+      )}
     </View>
   );
 }
@@ -62,7 +84,7 @@ const styles = StyleSheet.create({
   },
   loginTitle: {
     fontSize: 28,
-    marginBottom: 80,
+    marginBottom: 60,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -100,6 +122,23 @@ const styles = StyleSheet.create({
   },
   logarNoCardapio: {
     fontSize: 18,
+  },
+  message: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: '#CD0707',
+    padding: 12,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  messageText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 16,
   },
 });
 

@@ -1,13 +1,28 @@
-import React, { useContext} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useContext, useState} from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigate } from 'react-router-native';
 import { AppContext } from '../../context/AppContext';
+import { Button } from 'react-native-elements';
 
 
 const Cardapio = ({ children }) => {
   const navigate = useNavigate();
   const appInfo = useContext(AppContext);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleNavigate = () => {
+    if (modalVisible) {
+      setModalVisible(false);
+      navigate("/");
+    } else {
+      setModalVisible(true);
+    }
+  };
+
+  const handleEstabelecimentoPress = () => {
+    setModalVisible(true);
+  };
 
   return (
     <View style={styles.container}>
@@ -16,11 +31,7 @@ const Cardapio = ({ children }) => {
             <Text style={styles.mesa}>Mesa {appInfo.mesaApp}</Text>
         </View>
         <View style={styles.barraEstabelecimento}>
-          <TouchableOpacity
-            onPress={() => {
-                navigate("/")
-            }}
-          >
+          <TouchableOpacity onPress={handleEstabelecimentoPress}>
             <Text style={styles.nomeEstabelecimento}>{appInfo.nomeEstabelecimentoApp}</Text>
           </TouchableOpacity> 
         </View>
@@ -38,7 +49,34 @@ const Cardapio = ({ children }) => {
         </View>        
       </View>
 
-      <View style={styles.itens}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Deseja sair do cardápio?</Text>
+            <View style={styles.modalContainerButton}>
+              <Button
+                title="Sim"
+                onPress={handleNavigate}
+                buttonStyle={styles.modalButton}
+              />
+              <Button
+                title="Não"
+                onPress={() => setModalVisible(false)}
+                buttonStyle={styles.modalButton}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <View style={[styles.itens, modalVisible && { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
         <View style={styles.menu}>
           <TouchableOpacity onPress={() => navigate("/listaProdutos/1")}>
             <Text style={styles.categoria}>Pratos</Text>
@@ -62,10 +100,10 @@ const Cardapio = ({ children }) => {
           
         </View>
 
-        <View style={styles.conteudo}>
+        <View style={[styles.conteudo, modalVisible && { backgroundColor: 'rgba(0, 0, 0, 0.3)'}]}>
           {children}
         </View>
-        
+      
       </View>
     </View>
   );
@@ -92,8 +130,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#CD0707',
     width: 223,
     height: 80,
-    justifyContent: 'center', // Centraliza verticalmente
-    alignItems: 'center', // Centraliza horizontalmente
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   mesa: {
     textAlign: 'center',
@@ -138,6 +176,33 @@ const styles = StyleSheet.create({
   conteudo: {
     flex: 1,
     padding: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  modalContainerButton: {
+    flexDirection: 'row',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+    fontSize: 18,
+  },
+  modalButton: {
+    marginTop: 10,
+    marginHorizontal: 20,
+    paddingHorizontal: 20,
+    backgroundColor: '#3d9467',
   },
 });
 

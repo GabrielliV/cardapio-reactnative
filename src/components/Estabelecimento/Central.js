@@ -1,12 +1,26 @@
-import React, {useContext} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
+import React, {useContext, useState} from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { useNavigate } from 'react-router-native';
 import { EstabelecimentoContext } from '../../context/EstabelecimentoContext';
-
+import { Button } from 'react-native-elements';
 
 const Central = ({ children }) => {
   const navigate = useNavigate();
   const estabelecimentoInfo = useContext(EstabelecimentoContext);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleNavigate = () => {
+    if (modalVisible) {
+      setModalVisible(false);
+      navigate("/");
+    } else {
+      setModalVisible(true);
+    }
+  };
+
+  const handleEstabelecimentoPress = () => {
+    setModalVisible(true);
+  };
 
   return (    
     <View style={styles.container}>
@@ -17,15 +31,38 @@ const Central = ({ children }) => {
             <Text style={styles.nomeEstabelecimento}>{estabelecimentoInfo.nome}</Text>
         </View>
         <View style={styles.barraSair}>
-          <TouchableOpacity
-            onPress={() => {
-                navigate("/")
-            }}
-          >
+          <TouchableOpacity onPress={handleEstabelecimentoPress}>
             <Text style={styles.botaoSair}>SAIR</Text>
           </TouchableOpacity>
         </View>
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Deseja sair do cardápio?</Text>
+            <View style={styles.modalContainerButton}>
+              <Button
+                title="Sim"
+                onPress={handleNavigate}
+                buttonStyle={styles.modalButton}
+              />
+              <Button
+                title="Não"
+                onPress={() => setModalVisible(false)}
+                buttonStyle={styles.modalButton}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       <View style={styles.itens}>
         <View style={styles.menu}>
@@ -55,7 +92,7 @@ const Central = ({ children }) => {
           
         </View>
 
-        <View style={styles.conteudo}>
+        <View style={[styles.conteudo, modalVisible && { backgroundColor: 'rgba(0, 0, 0, 0.3)'}]}>
           {children}
         </View>
     
@@ -124,11 +161,33 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 20,
   },
-//   conteudo: {
-//     flex: 1, // Para ocupar o restante do espaço disponível
-//     backgroundColor: 'white', // Cor de fundo branca do conteúdo
-//     padding: 20,
-//   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  modalContainerButton: {
+    flexDirection: 'row',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+    fontSize: 18,
+  },
+  modalButton: {
+    marginTop: 10,
+    marginHorizontal: 20,
+    paddingHorizontal: 20,
+    backgroundColor: '#3d9467',
+  },
 });
 
 export default Central;

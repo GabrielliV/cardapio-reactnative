@@ -8,7 +8,14 @@ function Login({setMesaApp, setNomeEstabelecimentoApp, setIdApp}) {
   const [login, setLogin] = useState("");
   const [identificador, setIdentificador] = useState("");
   const [mesa, setMesa] = useState("");
-  
+  const [showMessage, setShowMessage] = useState(false);
+
+  const showAndHideMessage = (message) => {
+    setShowMessage(message);
+    setTimeout(() => {
+      setShowMessage('');
+    }, 3000); // 3000 milissegundos = 3 segundos
+  };
 
   return (
     <View style={styles.loginContainer}>
@@ -45,18 +52,35 @@ function Login({setMesaApp, setNomeEstabelecimentoApp, setIdApp}) {
           <TouchableOpacity
               style={styles.customButton}
               onPress={() => {
-                loginCliente(mesa, login, identificador).then((response) => {
-                  setMesaApp(response.data.mesa)
-                  setNomeEstabelecimentoApp(response.data.estabelecimento.nome)
-                  setIdApp(response.data.id)
-                  navigate("/listaProdutos/1")
-                })
+                loginCliente(mesa, login, identificador)
+                  .then((response) => {
+                    if (!response.data || !response.data.mesa) {
+                      showAndHideMessage('Mesa não encontrada.');
+                    } else {
+                      setMesaApp(response.data.mesa);
+                      setNomeEstabelecimentoApp(response.data.estabelecimento.nome);
+                      setIdApp(response.data.id);
+                      navigate("/listaProdutos/1");
+                    }
+                  })
+                  .catch((error) => {
+                    if (error.response && error.response.status === 500) {
+                      showAndHideMessage('Login ou Identificador incorreto.');
+                    } else {
+                      showAndHideMessage('Todos os campos devem ser preenchidos.');
+                    }
+                  });
               }}
             >
               <Text style={styles.buttonText}>ENTRAR</Text>
             </TouchableOpacity>
           </View>
       </View>
+      {showMessage && (
+      <View style={styles.message}>
+        <Text style={styles.messageText}>{showMessage}</Text>
+      </View>
+      )}
     </View>
   );
 }
@@ -89,7 +113,7 @@ const styles = StyleSheet.create({
   },
   loginTitle: {
     fontSize: 28,
-    marginBottom: 80,
+    marginBottom: 60,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -121,13 +145,30 @@ const styles = StyleSheet.create({
   },
   inferior: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Alinha os elementos à esquerda e à direita
-    alignItems: 'center', // Alinha verticalmente os elementos
-    width: 310, // Ajuste o tamanho conforme necessário
-    marginTop: 20, // Adicione margem superior conforme necessário
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: 310,
+    marginTop: 20,
   },
   logarComoFuncionario: {
     fontSize: 18,
+  },
+  message: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: '#CD0707',
+    padding: 12,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  messageText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 16,
   },
 });
 

@@ -29,6 +29,7 @@ const ListaProdutos = () => {
 
     const showAndHideMessage = (message) => {
       setShowSuccessMessage(message);
+      
       setTimeout(() => {
         setShowSuccessMessage('');
       }, 3000); // 3000 milissegundos = 3 segundos
