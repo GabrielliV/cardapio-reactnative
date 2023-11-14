@@ -39,7 +39,7 @@ export default function App() {
               <Routes>
                 <Route path='/' element={<Login setMesaApp={appInfo.setMesa} setNomeEstabelecimentoApp={appInfo.setNomeEstabelecimento} setIdApp={appInfo.setId} />} />
                 <Route path='/cardapio' element={<Cardapio />} />
-                <Route path='/listaProdutos/:categoriaId' element={<ListaProdutos />} />
+                <Route path='/listaProdutos/:categoriaId?/:busca?' element={<ListaProdutos />} />
                 <Route path='/carrinho/' element={<Carrinho setMesaIdApp={appInfo.setMesaId} />}/>
                 <Route path='/loginFuncionario' element={<LoginFuncionario setNome={estabelecimentoInfo.setNome} setId={estabelecimentoInfo.setId} />} />
                 <Route path='/pedidos' element={<Pedidos/>} />

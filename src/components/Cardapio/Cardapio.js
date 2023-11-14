@@ -1,15 +1,15 @@
-import React, { useContext, useState} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import React, { useContext, useState, useEffect} from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigate } from 'react-router-native';
 import { AppContext } from '../../context/AppContext';
 import { Button } from 'react-native-elements';
 
-
 const Cardapio = ({ children }) => {
   const navigate = useNavigate();
   const appInfo = useContext(AppContext);
   const [modalVisible, setModalVisible] = useState(false);
+  const [busca, setBusca] = useState("");
 
   const handleNavigate = () => {
     if (modalVisible) {
@@ -20,21 +20,42 @@ const Cardapio = ({ children }) => {
     }
   };
 
-  const handleEstabelecimentoPress = () => {
+  const handleMesaPress = () => {
     setModalVisible(true);
+  };
+
+  const handleBuscaPress = (busca) => {
+    if (busca.trim() === "") {
+      return;
+    }
+
+    navigate(`/listaProdutos/null/${busca ? encodeURIComponent(busca) : ''}`);
+    setBusca("");
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.barraSuperior}>
         <View style={styles.barraMesa}>
-            <Text style={styles.mesa}>Mesa {appInfo.mesaApp}</Text>
-        </View>
-        <View style={styles.barraEstabelecimento}>
-          <TouchableOpacity onPress={handleEstabelecimentoPress}>
-            <Text style={styles.nomeEstabelecimento}>{appInfo.nomeEstabelecimentoApp}</Text>
+          <TouchableOpacity onPress={handleMesaPress}>
+              <Text style={styles.mesa}>Mesa {appInfo.mesaApp}</Text>
           </TouchableOpacity> 
         </View>
+        <View style={styles.barraEstabelecimento}>
+          <Text style={styles.nomeEstabelecimento}>{appInfo.nomeEstabelecimentoApp}</Text>
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.lupaInput}
+            value={busca}
+            onChangeText={setBusca}
+          />
+        
+          <TouchableOpacity style={styles.buttonLupa} onPress={() => handleBuscaPress(busca)}>
+            <Icon name="search" style={styles.iconLupa} size={22}/>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.divisor}></View>
         <View>               
           <TouchableOpacity style={styles.botaoCarrinho}
             onPress={() => {
@@ -147,6 +168,39 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: 'white',
   },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 80,
+  },
+  lupaInput: {
+    fontSize: 18,
+    width: 250,
+    height: 40,
+    borderWidth: 1,
+    borderColor: 'gray',
+    padding: 8,
+    borderRadius: 5,    
+    backgroundColor: 'white',
+    marginEnd: 8,
+  },
+  buttonLupa: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 5,
+  },
+  iconLupa: {
+    color: 'white',
+    textAlign: 'center',
+  },
+  divisor: {
+    height: 40,
+    width: 1,
+    backgroundColor: 'white',
+    marginEnd: 20,
+    marginStart: 15,
+  },
   barraCarrinho: {
     flexDirection: 'row',
   },
@@ -184,7 +238,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: 'white',
-    padding: 22,
+    padding: 24,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 4,

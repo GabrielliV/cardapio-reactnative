@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Modal, ActivityIndicator } from 'react-native';
 import Cardapio from './Cardapio';
 import { CarrinhoContext } from '../../context/CarrinhoContext';
 import { AppContext } from '../../context/AppContext';
@@ -20,15 +20,15 @@ const Carrinho = () => {
 
     const handleNavigate = () => {
         if (modalVisible) {
-          setModalVisible(false);
-          handlePedido();
+            setModalVisible(false);
+            handlePedido();
         } else {
-          setModalVisible(true);
+            setModalVisible(true);
         }
-      };
-    
-    const handlePedido = () => {
-        if (inputCod.trim() == "") {
+    };
+
+    const handlePedido = async () => {
+        if (inputCod.trim() === "") {
             return;
         }
 
@@ -37,36 +37,33 @@ const Carrinho = () => {
             qtde: item.quantidade
         }));
 
-        solicitarPedido(appInfo.mesaIdApp, inputCod, inputObs, itensParaPedido);
+        try {
+            await solicitarPedido(appInfo.mesaIdApp, inputCod, inputObs, itensParaPedido);
 
-        showAndHideMessage('Pedido finalizado com sucesso!');
-
-        setTimeout(() => {
             limparCarrinho();
-            navigate("/listaProdutos/1");
-        }, 2000);
-    };
+            setShowSuccessMessage('Pedido finalizado com sucesso 😎');
 
-    const showAndHideMessage = (message) => {
-        setShowSuccessMessage(message);
-        setTimeout(() => {
-            setShowSuccessMessage('');
-        }, 3000); // 3000 milissegundos = 3 segundos
+            setTimeout(() => {                
+                navigate("/listaProdutos/1");
+            }, 3000);
+        } catch (error) {
+            console.error("Erro ao solicitar o pedido:", error);
+        }
     };
 
     const ItemQuantidade = ({ quantidade, incrementarItem, decrementarItem }) => {
         return (
-          <View style={styles.containerQuantidade}>
-            <TouchableOpacity style={styles.botaoQuantidade} onPress={decrementarItem}>
-              <Text style={styles.textoQtde}>-</Text>
-            </TouchableOpacity>
-            <Text style={styles.textoQuantidade}>{quantidade}</Text>
-            <TouchableOpacity style={styles.botaoQuantidade} onPress={incrementarItem}>
-              <Text style={styles.textoQtde}>+</Text>
-            </TouchableOpacity>
-          </View>
+            <View style={styles.containerQuantidade}>
+                <TouchableOpacity style={styles.botaoQuantidade} onPress={decrementarItem}>
+                    <Text style={styles.textoQtde}>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.textoQuantidade}>{quantidade}</Text>
+                <TouchableOpacity style={styles.botaoQuantidade} onPress={incrementarItem}>
+                    <Text style={styles.textoQtde}>+</Text>
+                </TouchableOpacity>
+            </View>
         );
-      };
+    };
 
     useEffect(() => {
         let novoTotal = 0;
@@ -81,15 +78,15 @@ const Carrinho = () => {
     }, [carrinho]);
 
     return (   
-        <Cardapio >
-            <View style={[styles.container, modalVisible && { backgroundColor: 'rgba(0, 0, 0, 0.8)'}]}>
-                 <View style={styles.cabecalho}>
+        <Cardapio>
+            <View style={[styles.container, (modalVisible || showSuccessMessage.length > 0) && { backgroundColor: 'rgba(0, 0, 0, 0.8)'}]}>
+                <View style={styles.cabecalho}>
                     <Text style={styles.labelDireita}>PRODUTO</Text>
                     <Text style={styles.label}>VALOR UNITÁRIO</Text>
                     <Text style={styles.label}>QTDE</Text>
                 </View>
             </View>
-            <View style={[styles.scrollContainer, modalVisible && { backgroundColor: 'rgba(0, 0, 0, 0.8)'}]}>
+            <View style={[styles.scrollContainer, (modalVisible || showSuccessMessage.length > 0) && { backgroundColor: 'rgba(0, 0, 0, 0.8)'}]}>
                 <FlatList
                     data={carrinho}
                     keyExtractor={(item) => item.id.toString()}
@@ -100,13 +97,13 @@ const Carrinho = () => {
                     )}
                     renderItem={({ item }) => (
                         <View style={styles.itemCarrinho}>
-                            <Text style={styles.itemNome}>{item.nome}</Text>                             
-                                <Text style={styles.itemPreco}>R$ {item.preco.toFixed(2).replace('.', ',')}</Text>
-                                <ItemQuantidade
-                                    quantidade={item.quantidade}
-                                    incrementarItem={() => incrementarItem(item.id)}
-                                    decrementarItem={() => decrementarItem(item.id)}
-                                /> 
+                            <Text style={styles.itemNome}>{item.nome}</Text>
+                            <Text style={styles.itemPreco}>R$ {item.preco.toFixed(2).replace('.', ',')}</Text>
+                            <ItemQuantidade
+                                quantidade={item.quantidade}
+                                incrementarItem={() => incrementarItem(item.id)}
+                                decrementarItem={() => decrementarItem(item.id)}
+                            /> 
                         </View>
                     )}
                 />
@@ -117,30 +114,31 @@ const Carrinho = () => {
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => {
-                setModalVisible(false);
+                    setModalVisible(false);
                 }}
             >
                 <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                    <Text style={styles.modalText}>Informe o código da comanda: </Text>
-                    <TextInput
-                        style={styles.codInput}
-                        value={inputCod}
-                        onChangeText={setInputCod}
-                    />     
-                    <View style={styles.modalContainerButton}>                    
-                        <Button
-                            title="Cancelar"
-                            onPress={() => setModalVisible(false)}
-                            buttonStyle={styles.modalButton}
-                        />
-                        <Button
-                            title="Pedir"
-                            onPress={handlePedido}
-                            buttonStyle={styles.modalButton}
-                        />
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalText}>Informe o código da comanda: </Text>
+                        <TextInput
+                            style={styles.codInput}
+                            value={inputCod}
+                            onChangeText={setInputCod}
+                        />     
+                        <View style={styles.modalContainerButton}>                    
+                            <Button
+                                title="Cancelar"
+                                onPress={() => setModalVisible(false)}
+                                buttonStyle={styles.modalButton}
+                            />
+                            <Button
+                                title="Pedir"
+                                onPress={handleNavigate}
+                                buttonStyle={styles.modalButton}
+                                disabled={!isPedidoEnabled}
+                            />
+                        </View>
                     </View>
-                </View>
                 </View>
             </Modal>
             
@@ -148,7 +146,7 @@ const Carrinho = () => {
                 <View style={styles.containerObs}>
                     <Text style={styles.obs}>Observação do pedido:</Text>
                     <TextInput
-                        style={[styles.obsInput, modalVisible && { backgroundColor: 'rgba(0, 0, 0, 0.8)'}]}
+                        style={[styles.obsInput, (modalVisible || showSuccessMessage.length > 0) && { backgroundColor: 'rgba(0, 0, 0, 0.8)'}]}
                         value={inputObs}
                         onChangeText={setInputObs}
                     />
@@ -156,10 +154,7 @@ const Carrinho = () => {
                 <View style={styles.containerInferiorFinalizar}>
                     <Text style={styles.total}>Total: R$ {total.toFixed(2).replace('.', ',')}</Text>
                     <TouchableOpacity
-                        style={[
-                            styles.botaoPedir,
-                            { backgroundColor: isPedidoEnabled ? '#3d9467' : '#616161' },
-                        ]}
+                        style={styles.botaoPedir}
                         onPress={handleNavigate}
                         disabled={!isPedidoEnabled}
                     >
@@ -167,9 +162,9 @@ const Carrinho = () => {
                     </TouchableOpacity>
                 </View>
                 {showSuccessMessage && (
-                <View style={styles.successMessage}>
-                    <Text style={styles.successText}>{showSuccessMessage}</Text>
-                </View>
+                    <View style={styles.successMessage}>
+                        <Text style={styles.successText}>{showSuccessMessage}</Text>
+                    </View>
                 )}
             </View>
         </Cardapio>
@@ -356,20 +351,19 @@ const styles = StyleSheet.create({
     },
     successMessage: {
         position: 'absolute',
-        top: 20,
-        left: 20,
-        right: 20,
         backgroundColor: '#3d9467',
-        padding: 12,
+        bottom: 350,
+        left: 200,
+        right: 200,
+        padding: 20,
         borderRadius: 5,
         justifyContent: 'center',
         alignItems: 'center',
     },
     successText: {
-        color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
-        fontSize: 16,
+        fontSize: 20,
     },
 }); 
 

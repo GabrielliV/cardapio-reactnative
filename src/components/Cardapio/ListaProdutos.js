@@ -1,30 +1,47 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
-import { listaProdutos } from '../../services/Produtos';
+import { listaProdutos, listaProdutosLupa } from '../../services/Produtos';
 import { useParams } from 'react-router-native';
 import Cardapio from './Cardapio';
 import { CarrinhoContext } from '../../context/CarrinhoContext';
 
 const ListaProdutos = () => {
-    const { categoriaId } = useParams();
+    const { categoriaId, busca } = useParams();
     const [listProdutos, setListProdutos] = useState([]);
     const { adicionarAoCarrinho } = useContext(CarrinhoContext);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-    const listarProdutos = () => {
-      setListProdutos([]);
+    const listarProdutos = () => {    
 
-      listaProdutos(categoriaId)
+      if (busca) {
+        console.log("Chegou na busca");
+
+        const buscaString = busca.toString();
+
+        listaProdutosLupa(buscaString)
         .then((response) => {
           if (response.data && Array.isArray(response.data)) {
             setListProdutos(response.data);
           } else {
-            console.error('Nenhum produto encontrado na categoria.');
+            console.error('Nenhum produto encontrado na busca.');
           }
         })
         .catch((error) => {
-          console.error('Erro ao buscar produtos:', error);
-        });
+          console.error('Erro ao pesquisar produtos:', error);
+        })
+      } else {
+        listaProdutos(categoriaId)
+          .then((response) => {
+            if (response.data && Array.isArray(response.data)) {
+              setListProdutos(response.data);
+            } else {
+              console.error('Nenhum produto encontrado na categoria.');
+            }
+          })
+          .catch((error) => {
+            console.error('Erro ao buscar produtos:', error);
+          });
+      }
     };
 
     const showAndHideMessage = (message) => {
@@ -36,8 +53,10 @@ const ListaProdutos = () => {
     };
     
     useEffect(() => {
-      listarProdutos(categoriaId);
-    }, [categoriaId]);
+      setListProdutos([]);
+      console.log(busca);
+      listarProdutos();
+    }, [categoriaId, busca]);
 
     return (   
       <Cardapio>

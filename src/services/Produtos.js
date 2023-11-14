@@ -4,6 +4,8 @@ export const listaProdutos = (id_categoria) => api.get(`cardapio/produtos/catego
 
 export const listaTodosProdutos = (id_categoria) => api.get(`cardapio/produtos/lista/categoria/${id_categoria}`)
 
+export const listaProdutosLupa = (busca) => api.get(`cardapio/produtos/lupa/${busca}`)
+
 export const produto = (id) => api.get(`cardapio/produtos/produto/${id}`)
 
 export const ativaInativa = (id, status) => api.post(`cardapio/produtos/status/produto/${id}/${status}`)
