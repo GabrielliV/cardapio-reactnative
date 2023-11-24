@@ -14,23 +14,27 @@ const ListaProdutos = () => {
     const listarProdutos = () => {    
 
       if (busca) {
-        console.log("Chegou na busca");
-
         const buscaString = busca.toString();
 
         listaProdutosLupa(buscaString)
         .then((response) => {
-          if (response.data && Array.isArray(response.data)) {
+          if (response.data && Array.isArray(response.data) && response.data != "") {
             setListProdutos(response.data);
           } else {
-            console.error('Nenhum produto encontrado na busca.');
+            showAndHideMessage('Nenhum produto encontrado na busca.');
+            listarProdutosCategoria(1);
           }
         })
         .catch((error) => {
           console.error('Erro ao pesquisar produtos:', error);
         })
       } else {
-        listaProdutos(categoriaId)
+        listarProdutosCategoria(categoriaId);
+      }
+    };
+
+    const listarProdutosCategoria = (categoriaIdBusca) => {
+      listaProdutos(categoriaIdBusca)
           .then((response) => {
             if (response.data && Array.isArray(response.data)) {
               setListProdutos(response.data);
@@ -41,8 +45,7 @@ const ListaProdutos = () => {
           .catch((error) => {
             console.error('Erro ao buscar produtos:', error);
           });
-      }
-    };
+    };    
 
     const showAndHideMessage = (message) => {
       setShowSuccessMessage(message);
@@ -54,7 +57,6 @@ const ListaProdutos = () => {
     
     useEffect(() => {
       setListProdutos([]);
-      console.log(busca);
       listarProdutos();
     }, [categoriaId, busca]);
 
