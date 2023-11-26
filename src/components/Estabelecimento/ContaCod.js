@@ -53,11 +53,9 @@ const ContaCod = () => {
                 keyExtractor={(item) => item.itemId}
                 renderItem={({ item }) => (
                 <View style={styles.itens}>
-                    <View style={styles.infoContainer}>
-                        <Text style={styles.itemTexto}>{item.nome}</Text>                
-                        <Text style={styles.itemTexto}>{item.qtde}</Text>      
-                        <Text style={styles.itemTexto}>R$ {typeof item.valor === 'number' ? item.valor.toFixed(2).replace('.', ',') : '0,00'}</Text>      
-                    </View>          
+                    <Text style={styles.itemTexto}>{item.nome}</Text>                
+                    <Text style={styles.itemQtde}>{item.qtde}</Text>      
+                    <Text style={styles.itemValor}>R$ {typeof item.valor === 'number' ? item.valor.toFixed(2).replace('.', ',') : '0,00'}</Text>              
                 </View>
                 )}
             />            
@@ -102,19 +100,29 @@ const ContaCod = () => {
         justifyContent: 'space-between',
         marginEnd: 200,
     },
-    itens: {
-        padding: 23,
-        justifyContent: 'space-between',
-    },
     scrollContainer: {
         maxHeight: 400,
         flex: 0,
     },
-    infoContainer: {
-        marginEnd: 200,
-        justifyContent: 'space-between',   
+    itens: {
+        paddingStart: 23,
+        paddingTop: 16,
+        justifyContent: 'space-between',
         flexDirection: 'row',
     },
+    itemTexto: {
+        fontSize: 18,
+        flex: 2,
+    },
+    itemQtde: {
+        fontSize: 18,
+        flex: 1,
+    },  
+    itemValor: {
+        fontSize: 18,
+        flex: 1,
+        marginEnd: 150,
+    },  
     label: {    
         fontSize: 18,
         fontWeight: 'bold',
@@ -123,10 +131,7 @@ const ContaCod = () => {
         fontSize: 18,
         fontWeight: 'bold',
         marginStart: 150,
-    },
-    itemTexto: {
-        fontSize: 18,
-    },
+    },    
     botaoFinalizar: {
         backgroundColor: '#CD0707',
         paddingHorizontal: 30,

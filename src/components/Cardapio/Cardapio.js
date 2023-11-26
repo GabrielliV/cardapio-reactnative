@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect} from 'react';
+import React, { useContext, useState} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigate } from 'react-router-native';
@@ -10,6 +10,7 @@ const Cardapio = ({ children }) => {
   const appInfo = useContext(AppContext);
   const [modalVisible, setModalVisible] = useState(false);
   const [busca, setBusca] = useState("");
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
 
   const handleNavigate = () => {
     if (modalVisible) {
@@ -31,6 +32,11 @@ const Cardapio = ({ children }) => {
 
     navigate(`/listaProdutos/null/${busca ? encodeURIComponent(busca) : ''}`);
     setBusca("");
+  };
+
+  const handleCategoriaPress = (categoriaId) => {
+    setCategoriaSelecionada(categoriaId);
+    navigate(`/listaProdutos/${categoriaId}`);
   };
 
   return (
@@ -99,26 +105,25 @@ const Cardapio = ({ children }) => {
 
       <View style={[styles.itens, modalVisible && { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
         <View style={styles.menu}>
-          <TouchableOpacity onPress={() => navigate("/listaProdutos/1")}>
-            <Text style={styles.categoria}>Pratos</Text>
+          <TouchableOpacity onPress={() => handleCategoriaPress(1)}>
+            <Text style={[styles.categoria, categoriaSelecionada === 1 && styles.categoriaSelecionada]}>Pratos</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigate("/listaProdutos/2")}>
-          <Text style={styles.categoria}>Bebidas Alcoólicas</Text>
+          <TouchableOpacity onPress={() => handleCategoriaPress(2)}>
+            <Text style={[styles.categoria, categoriaSelecionada === 2 && styles.categoriaSelecionada]}>Bebidas Alcoólicas</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigate("/listaProdutos/3")}>
-            <Text style={styles.categoria}>Bebidas Não Alcoólicas</Text>
+          <TouchableOpacity onPress={() => handleCategoriaPress(3)}>
+            <Text style={[styles.categoria, categoriaSelecionada === 3 && styles.categoriaSelecionada]}>Bebidas Não Alcoólicas</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigate("/listaProdutos/4")}>
-            <Text style={styles.categoria}>Sobremesas</Text>
+          <TouchableOpacity onPress={() => handleCategoriaPress(4)}>
+            <Text style={[styles.categoria, categoriaSelecionada === 4 && styles.categoriaSelecionada]}>Sobremesas</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity onPress={() => navigate("/listaProdutos/5")}>
-            <Text style={styles.categoria}>Outros</Text>
-          </TouchableOpacity>
-          
+
+          <TouchableOpacity onPress={() => handleCategoriaPress(5)}>
+            <Text style={[styles.categoria, categoriaSelecionada === 5 && styles.categoriaSelecionada]}>Outros</Text>
+          </TouchableOpacity>    
         </View>
 
         <View style={[styles.conteudo, modalVisible && { backgroundColor: 'rgba(0, 0, 0, 0.3)'}]}>
@@ -218,14 +223,17 @@ const styles = StyleSheet.create({
   menu: {
     width: 223,
     backgroundColor: 'black',
-    padding: 20,
+    paddingHorizontal: 20,
   },
   categoria: {
-    color: 'white',
     fontSize: 22,
     marginTop: 50,
     marginBottom: 50,
     textAlign: 'center',
+    color: 'white',
+  },
+  categoriaSelecionada: {
+    color: '#3d9467',
   },
   conteudo: {
     flex: 1,

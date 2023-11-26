@@ -54,7 +54,7 @@ const Mesas = () => {
     <Central>
       <View style={styles.container}>
         <View style={styles.inputContainer}>
-          <Text style={styles.textCod}>Cód.:</Text>
+          <Text style={styles.textCod}>Cód.</Text>
           <TextInput
             style={styles.codInput}
             value={cod}
@@ -68,6 +68,36 @@ const Mesas = () => {
           >
             <Icon name="search" style={styles.iconBotao} size={25}/>
           </TouchableOpacity>
+        </View>
+          <View style={styles.barraAdicionar}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.textMesa}>Mesa</Text>
+              <TextInput
+                style={styles.mesaInput}
+                value={inputMesa}
+                onChangeText={text => {
+                  const formattedText = text.replace(/[^0-9]/g, '');
+                  setInputMesa(formattedText);
+                }}
+                keyboardType="numeric"
+              />
+            
+            <TouchableOpacity style={styles.botaoVerde}
+              onPress={() => {
+                criaMesa(estabelecimentoInfo.id, inputMesa)
+                  .then(() => {
+                      setReloadPage(true);
+                      setInputMesa('');
+                      showAndHideMessage('A mesa foi criada com sucesso');
+                    })
+                    .catch(() => {
+                      showAndHideMessage('Essa mesa já existe.');
+                  });
+                }}
+              >
+              <Text style={styles.textoBotao}>Criar</Text>
+            </TouchableOpacity>
+            </View>
         </View>
       </View>
       <View style={styles.scrollContainer}>
@@ -105,8 +135,7 @@ const Mesas = () => {
                       .then(() => {
                         setReloadPage(true);
                       })
-                      .catch((error) => {
-                        console.error('Erro ao mudar status da mesa:', error);
+                      .catch(() => {
                         showAndHideMessage('Erro ao mudar status da mesa.');
                       });
                   }}
@@ -117,38 +146,7 @@ const Mesas = () => {
             )}
             extraData={reloadPage}
           />
-      </View>
-      <View style={styles.barraAdicionar}>
-        <View style={styles.inputContainer}>
-          <Text style={styles.textMesa}>Mesa</Text>
-          <TextInput
-            style={styles.mesaInput}
-            value={inputMesa}
-            onChangeText={text => {
-              const formattedText = text.replace(/[^0-9]/g, '');
-              setInputMesa(formattedText);
-            }}
-            keyboardType="numeric"
-          />
-        
-        <TouchableOpacity style={styles.botaoVerde}
-          onPress={() => {
-            criaMesa(estabelecimentoInfo.id, inputMesa)
-              .then(() => {
-                  setReloadPage(true);
-                  setInputMesa('');
-                  showAndHideMessage('A mesa foi criada com sucesso');
-                })
-                .catch((error) => {
-                  console.error('Erro ao criar a mesa:', error);
-                  showAndHideMessage('Erro ao criar a mesa');
-              });
-            }}
-          >
-          <Text style={styles.textoBotao}>Criar</Text>
-        </TouchableOpacity>
-        </View>
-      </View>
+      </View>      
       {showSuccessMessage && (
       <View style={styles.successMessage}>
         <Text style={styles.successText}>{showSuccessMessage}</Text>
@@ -167,7 +165,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
   },
   scrollContainer: {
-    maxHeight: 495,
+    maxHeight: 530,
     flex: 0,
   },
   textoMesa: {
@@ -198,6 +196,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   container: {
+    flexDirection: 'row',
     marginStart: 23,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
@@ -233,7 +232,7 @@ const styles = StyleSheet.create({
   barraAdicionar: {
     flex: 1,
     justifyContent: 'flex-end',
-    padding: 23,
+    marginStart: 240,
   },
   textMesa: {
     fontSize: 18,

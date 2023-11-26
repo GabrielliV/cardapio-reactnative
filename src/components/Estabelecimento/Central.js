@@ -1,13 +1,22 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
-import { useNavigate } from 'react-router-native';
+import { useNavigate,useLocation } from 'react-router-native';
 import { EstabelecimentoContext } from '../../context/EstabelecimentoContext';
 import { Button } from 'react-native-elements';
 
 const Central = ({ children }) => {
   const navigate = useNavigate();
   const estabelecimentoInfo = useContext(EstabelecimentoContext);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);  
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location && location.state && location.state.categoriaSelecionada) {
+      setCategoriaSelecionada(location.state.categoriaSelecionada);
+    }
+  }, [location]);
 
   const handleNavigate = () => {
     if (modalVisible) {
@@ -20,6 +29,10 @@ const Central = ({ children }) => {
 
   const handleEstabelecimentoPress = () => {
     setModalVisible(true);
+  };
+
+  const handleCategoriaPress = (rota) => {
+    navigate("/" + rota, { state: { categoriaSelecionada: rota } });
   };
 
   return (    
@@ -52,12 +65,12 @@ const Central = ({ children }) => {
               <Button
                 title="Sim"
                 onPress={handleNavigate}
-                buttonStyle={styles.modalButton}
+                buttonStyle={styles.modalButtonSim}
               />
               <Button
                 title="Não"
                 onPress={() => setModalVisible(false)}
-                buttonStyle={styles.modalButton}
+                buttonStyle={styles.modalButtonNao}
               />
             </View>
           </View>
@@ -66,28 +79,28 @@ const Central = ({ children }) => {
 
       <View style={styles.itens}>
         <View style={styles.menu}>
-          <TouchableOpacity>
-            <Text style={styles.categoria} onPress={() => {
-                navigate("/pedidos")
-            }}>Pedidos</Text>
+        <TouchableOpacity onPress={() => handleCategoriaPress("pedidos")}>
+            <Text style={[styles.categoriaMenu, categoriaSelecionada === "pedidos" && styles.categoriaSelecionada]}>
+              Pedidos
+            </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity>
-          <Text style={styles.categoria} onPress={() => {
-                navigate("/mesas")
-            }}>Mesas</Text>
+          <TouchableOpacity onPress={() => handleCategoriaPress("mesas")}>
+            <Text style={[styles.categoriaMenu, categoriaSelecionada === "mesas" && styles.categoriaSelecionada]}>
+              Mesas
+            </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity>
-            <Text style={styles.categoria} onPress={() => {
-                navigate("/categorias")
-            }}>Produtos</Text>
+          <TouchableOpacity onPress={() => handleCategoriaPress("categorias")}>
+            <Text style={[styles.categoriaMenu, categoriaSelecionada === "categorias" && styles.categoriaSelecionada]}>
+              Produtos
+            </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity>
-            <Text style={styles.categoria} onPress={() => {
-                navigate("/relatorios")
-            }}>Relatórios</Text>
+          <TouchableOpacity onPress={() => handleCategoriaPress("relatorios")}>
+            <Text style={[styles.categoriaMenu, categoriaSelecionada === "relatorios" && styles.categoriaSelecionada]}>
+              Relatórios
+            </Text>
           </TouchableOpacity>
           
         </View>
@@ -145,19 +158,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   menu: {
-    width: 223, // Largura do menu lateral
-    backgroundColor: 'black', // Cor de fundo preta do menu lateral
+    width: 223,
+    backgroundColor: 'black',
     padding: 30,
   },
-  categoria: {
-    color: 'white', // Cor do texto das categorias
+  categoriaMenu: {
+    color: 'white',
     fontSize: 22,
     marginTop: 70,
     marginBottom: 50,
     textAlign: 'center',
   },
+  categoriaSelecionada: {
+    color: '#3d9467',
+  },
   conteudo: {
-    flex: 1, // Para ocupar o restante do espaço disponível
+    flex: 1,
     backgroundColor: 'white',
     padding: 20,
   },
@@ -182,7 +198,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
   },
-  modalButton: {
+  modalButtonSim: {
+    marginTop: 10,
+    marginHorizontal: 20,
+    paddingHorizontal: 20,
+    backgroundColor: '#CD0707',
+  },
+  modalButtonNao: {
     marginTop: 10,
     marginHorizontal: 20,
     paddingHorizontal: 20,

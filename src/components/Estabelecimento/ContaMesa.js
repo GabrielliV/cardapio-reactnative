@@ -53,11 +53,9 @@ const ContaMesa = () => {
                 keyExtractor={(item) => item.itemId}
                 renderItem={({ item }) => (
                 <View style={styles.itens}>
-                    <View style={styles.infoContainer}>
-                        <Text style={styles.itemNome}>{item.nome}</Text>              
-                        <Text style={styles.itemQtde}>{item.qtde}</Text>   
-                        <Text style={styles.itemValor}>R$ {typeof item.valor === 'number' ? item.valor.toFixed(2).replace('.', ',') : '0,00'}</Text>      
-                    </View>          
+                    <Text style={styles.itemNome}>{item.nome}</Text>              
+                    <Text style={styles.itemQtde}>{item.qtde}</Text>   
+                    <Text style={styles.itemValor}>R$ {typeof item.valor === 'number' ? item.valor.toFixed(2).replace('.', ',') : '0,00'}</Text>              
                 </View>
                 )}
             />            
@@ -110,16 +108,14 @@ const ContaMesa = () => {
         marginEnd: 200,
     },
     itens: {
-        padding: 23,
+        paddingStart: 23,
+        paddingTop: 16,
         justifyContent: 'space-between',
+        flexDirection: 'row',
     },
     scrollContainer: {
         maxHeight: 400,
         flex: 0,
-    },
-    infoContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',           
     },
     label: {    
         fontSize: 18,
@@ -128,26 +124,25 @@ const ContaMesa = () => {
     labelQtde: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginStart: 200,
+        marginStart: 210,
     },
     labelValor: {
         fontSize: 18,
         fontWeight: 'bold',
     },
     itemNome: {
-        flex: 1,
+        flex: 2,
         fontSize: 18,
-        alignSelf: 'flex-start',
     },
     itemQtde: {
         flex: 1,
-        width: 60,
         fontSize: 18,
-        textAlign: 'center',
+        marginStart: 150,
     },
     itemValor: {
-        marginEnd: 270,
+        flex: 1,
         fontSize: 18,
+        marginEnd: 200,
     },
     botaoFinalizar: {
         backgroundColor: '#CD0707',
