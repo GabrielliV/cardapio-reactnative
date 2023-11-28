@@ -169,9 +169,9 @@ const styles = StyleSheet.create({
   },
   nomeEstabelecimento: {
     paddingLeft: 14,
-    paddingRight:380,
     fontSize: 22,
-    color: 'white',
+    color: 'white',    
+    width: 400,
   },
   inputContainer: {
     flexDirection: 'row',

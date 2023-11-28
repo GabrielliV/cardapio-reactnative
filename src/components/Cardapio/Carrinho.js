@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Modal } from 'react-native';
 import Cardapio from './Cardapio';
 import { CarrinhoContext } from '../../context/CarrinhoContext';
 import { AppContext } from '../../context/AppContext';
@@ -9,8 +9,9 @@ import { useNavigate } from 'react-router-native';
 
 const Carrinho = () => {
     const { carrinho, incrementarItem, decrementarItem, limparCarrinho } = useContext(CarrinhoContext);
-    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const appInfo = useContext(AppContext);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");  
     const [inputCod, setInputCod] = useState("");
     const [inputObs, setInputObs] = useState("");
     const [total, setTotal] = useState(0);
@@ -29,26 +30,27 @@ const Carrinho = () => {
 
     const handlePedido = async () => {
         if (inputCod.trim() === "") {
-            return;
-        }
-
-        const itensParaPedido = carrinho.map(item => ({
-            produtoId: item.id,
-            qtde: item.quantidade
-        }));
-
-        try {
-            await solicitarPedido(appInfo.mesaIdApp, inputCod, inputObs, itensParaPedido);
-
-            limparCarrinho();
-            setShowSuccessMessage('Pedido finalizado com sucesso 😎');
-
-            setTimeout(() => {                
-                navigate("/listaProdutos/1");
-            }, 3000);
-        } catch (error) {
-            console.error("Erro ao solicitar o pedido:", error);
-        }
+            setModalVisible(true);
+            setErrorMessage('Informe o código.');
+        } else {
+            const itensParaPedido = carrinho.map(item => ({
+                produtoId: item.id,
+                qtde: item.quantidade
+            }));
+    
+            try {
+                await solicitarPedido(appInfo.mesaIdApp, inputCod, inputObs, itensParaPedido);
+    
+                limparCarrinho();
+                setShowSuccessMessage('Pedido finalizado com sucesso 😎');
+    
+                setTimeout(() => {                
+                    navigate("/listaProdutos/1");
+                }, 3000);
+            } catch (error) {
+                console.error("Erro ao solicitar o pedido:", error);
+            }
+        }        
     };
 
     const ItemQuantidade = ({ quantidade, incrementarItem, decrementarItem }) => {
@@ -124,7 +126,9 @@ const Carrinho = () => {
                             style={styles.codInput}
                             value={inputCod}
                             onChangeText={setInputCod}
-                        />     
+                            placeholder={errorMessage}
+                            placeholderTextColor="red"
+                        />    
                         <View style={styles.modalContainerButton}>                    
                             <Button
                                 title="Cancelar"
