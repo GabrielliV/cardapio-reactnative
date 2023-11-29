@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Modal, Keyboard } from 'react-native';
 import Cardapio from './Cardapio';
 import { CarrinhoContext } from '../../context/CarrinhoContext';
 import { AppContext } from '../../context/AppContext';
@@ -11,7 +11,8 @@ const Carrinho = () => {
     const { carrinho, incrementarItem, decrementarItem, limparCarrinho } = useContext(CarrinhoContext);
     const appInfo = useContext(AppContext);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");  
+    const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");    
     const [inputCod, setInputCod] = useState("");
     const [inputObs, setInputObs] = useState("");
     const [total, setTotal] = useState(0);
@@ -67,7 +68,7 @@ const Carrinho = () => {
         );
     };
 
-    useEffect(() => {
+    useEffect(() => {      
         let novoTotal = 0;
         carrinho.forEach(item => {
             const subtotal = item.preco * item.quantidade;
@@ -76,8 +77,29 @@ const Carrinho = () => {
 
         setTotal(novoTotal);
 
-        setIsPedidoEnabled(carrinho.length > 0);
+        setIsPedidoEnabled(carrinho.length > 0);        
     }, [carrinho]);
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+          'keyboardDidShow',
+          () => {
+            setIsKeyboardOpen(true);
+          }
+        );
+    
+        const keyboardDidHideListener = Keyboard.addListener(
+          'keyboardDidHide',
+          () => {
+            setIsKeyboardOpen(false);
+          }
+        );
+    
+        return () => {
+          keyboardDidShowListener.remove();
+          keyboardDidHideListener.remove();
+        };
+      }, []); 
 
     return (   
         <Cardapio>
@@ -145,7 +167,15 @@ const Carrinho = () => {
                     </View>
                 </View>
             </Modal>
-            
+            {isKeyboardOpen && (
+            <View style={styles.obsTecladoAberto}>
+                <TextInput
+                style={styles.textoObsTecladoAberto}
+                onChangeText={setInputObs}
+                value={inputObs}
+                />
+            </View>
+            )}
             <View style={styles.containerInferior}>
                 <View style={styles.containerObs}>
                     <Text style={styles.obs}>Observação do pedido:</Text>
@@ -153,8 +183,11 @@ const Carrinho = () => {
                         style={[styles.obsInput, (modalVisible || showSuccessMessage.length > 0) && { backgroundColor: 'rgba(0, 0, 0, 0.8)'}]}
                         value={inputObs}
                         onChangeText={setInputObs}
+                        multiline={true} 
+                        numberOfLines={4}
+                        onPressIn={() => setIsKeyboardOpen(true)}
                     />
-                </View>
+                </View>               
                 <View style={styles.containerInferiorFinalizar}>
                     <Text style={styles.total}>Total: R$ {total.toFixed(2).replace('.', ',')}</Text>
                     <TouchableOpacity
@@ -165,12 +198,12 @@ const Carrinho = () => {
                         <Text style={styles.textoBotao}>PEDIR</Text>
                     </TouchableOpacity>
                 </View>
-                {showSuccessMessage && (
-                    <View style={styles.successMessage}>
-                        <Text style={styles.successText}>{showSuccessMessage}</Text>
-                    </View>
-                )}
             </View>
+            {showSuccessMessage && (
+                <View style={styles.successMessage}>
+                    <Text style={styles.successText}>{showSuccessMessage}</Text>
+                </View>
+            )}
         </Cardapio>
     )
 };
@@ -264,14 +297,24 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginHorizontal: 10,
     },
+    obsTecladoAberto: {
+        position: 'absolute',
+        backgroundColor: '#DCDCDC',
+        bottom: 2,
+        left: 30,
+        right: 30,
+        padding: 8,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    textoObsTecladoAberto: {
+        color: 'black',
+        fontSize: 18,
+    },
     containerInferior: {
         flex: 1,
         flexDirection: 'row',
-    },
-    containerInferiorFinalizar: {
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
-        marginStart: 200,
     },
     containerObs: {
         flexDirection: 'column',
@@ -293,6 +336,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'black',
         marginEnd: 8,
         color: 'white',
+    },
+    containerInferiorFinalizar: {
+        top: 50,
+        start: 230,
     },
     total: {
         fontSize: 18,

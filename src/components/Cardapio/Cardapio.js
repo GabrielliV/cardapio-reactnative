@@ -1,7 +1,7 @@
-import React, { useContext, useState} from 'react';
+import React, { useContext, useState, useEffect} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigate } from 'react-router-native';
+import { useNavigate, useLocation } from 'react-router-native';
 import { AppContext } from '../../context/AppContext';
 import { Button } from 'react-native-elements';
 
@@ -11,6 +11,14 @@ const Cardapio = ({ children }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [busca, setBusca] = useState("");
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location && location.state && location.state.categoriaSelecionada) {
+      setCategoriaSelecionada(location.state.categoriaSelecionada);
+    }
+  }, [location]);
 
   const handleNavigate = () => {
     if (modalVisible) {
@@ -36,7 +44,7 @@ const Cardapio = ({ children }) => {
 
   const handleCategoriaPress = (categoriaId) => {
     setCategoriaSelecionada(categoriaId);
-    navigate(`/listaProdutos/${categoriaId}`);
+    navigate(`/listaProdutos/${categoriaId}`, { state: { categoriaSelecionada: categoriaId } });
   };
 
   return (
