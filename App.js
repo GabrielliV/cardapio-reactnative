@@ -31,13 +31,13 @@ export default function App() {
 
   return (
     <NativeRouter>
-      <AppContext.Provider value={{ mesaApp: appInfo.mesa, mesaIdApp: appInfo.mesa, nomeEstabelecimentoApp: appInfo.nomeEstabelecimento, idApp: appInfo.id }}>
+      <AppContext.Provider value={{ mesaApp: appInfo.mesa, mesaIdApp: appInfo.mesaId, nomeEstabelecimentoApp: appInfo.nomeEstabelecimento, idApp: appInfo.id }}>
         <EstabelecimentoContext.Provider value={{ nome: estabelecimentoInfo.nome, id: estabelecimentoInfo.id }}>
           <CarrinhoContext.Provider value={{carrinho: carrinhoInfo.carrinho, adicionarAoCarrinho: carrinhoInfo.adicionarAoCarrinho, 
             incrementarItem: carrinhoInfo.incrementarItem, decrementarItem: carrinhoInfo.decrementarItem, limparCarrinho: carrinhoInfo.limparCarrinho}}>
             <View style={styles.container}>
               <Routes>
-                <Route path='/' element={<Login setMesaApp={appInfo.setMesa} setNomeEstabelecimentoApp={appInfo.setNomeEstabelecimento} setIdApp={appInfo.setId} />} />
+                <Route path='/' element={<Login setMesaApp={appInfo.setMesa} setMesaIdApp={appInfo.setMesaId} setNomeEstabelecimentoApp={appInfo.setNomeEstabelecimento} setIdApp={appInfo.setId} />} />
                 <Route path='/cardapio' element={<Cardapio />} />
                 <Route path='/listaProdutos/:categoriaId?/:busca?' element={<ListaProdutos />} />
                 <Route path='/carrinho/' element={<Carrinho setMesaIdApp={appInfo.setMesaId} />}/>

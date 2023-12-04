@@ -79,7 +79,7 @@ const ListaProdutos = () => {
                     <Text style={styles.precoProduto}>R$ {typeof item.preco === 'number' ? item.preco.toFixed(2).replace('.', ',') : '0,00'}</Text>
                     <TouchableOpacity style={styles.botaoAdicionar} onPress={() => {
                       adicionarAoCarrinho(item.id, item.nome, item.preco);
-                      showAndHideMessage(`Produto "${item.nome}" adicionado ao carrinho.`);
+                      showAndHideMessage(`"${item.nome}" adicionado ao carrinho.`);
                     }}>
                       <Text style={styles.textoBotao}>Adicionar ao carrinho</Text>
                     </TouchableOpacity>

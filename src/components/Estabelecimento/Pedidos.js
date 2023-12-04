@@ -12,6 +12,7 @@ const Pedidos = () => {
   const [listTempoMedio, setListTempoMedio] = useState([]);
   const [reloadPage, setReloadPage] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showEmptyView, setShowEmptyView] = useState(false);
 
   const handlePedidoFinalizado = (pedidoId) => {
     finalizar(pedidoId).then(() => {
@@ -29,11 +30,13 @@ const Pedidos = () => {
   const listaPedidos = () => {
     listarPedidos(estabelecimentoInfo.id)
       .then((response) => {
-        if (response.data && Array.isArray(response.data)) {
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+          setShowEmptyView(false);
           setListPedidos(response.data);
           listaTempoMedio(estabelecimentoInfo.id);
         } else {
-          console.error('Nenhum pedido pendente.');
+          setShowEmptyView(true);
+          setListPedidos();
         }
       })
       .catch((error) => {
@@ -68,41 +71,46 @@ const Pedidos = () => {
 
   return (   
     <Central>
+      {showEmptyView && (
+        <View style={styles.emptyPedidoContainer}>
+          <Text style={styles.emptyPedidoText}>Nenhum pedido pendente 👍</Text>
+        </View>
+      )}
       <View style={styles.scrollContainer}>
-        <FlatList
-            data={listPedidos}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.itens}>
-                <Text style={styles.texto}>Pedido {item.id}</Text>
-                <Text style={styles.texto}>{item.hora_pedido}</Text>
-                <Text style={styles.texto}>Mesa {item.mesa}</Text>
-                <TouchableOpacity style={styles.botaoVizualizar} 
-                  onPress={() => {
-                    navigate(`/pedido/${item.id}`); 
+          <FlatList
+              data={listPedidos}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <View style={styles.itens}>
+                  <Text style={styles.texto}>Pedido {item.id}</Text>
+                  <Text style={styles.texto}>{item.hora_pedido}</Text>
+                  <Text style={styles.texto}>Mesa {item.mesa}</Text>
+                  <TouchableOpacity style={styles.botaoVizualizar} 
+                    onPress={() => {
+                      navigate(`/pedido/${item.id}`); 
+                    }}
+                  >
+                    <Text style={styles.textoBotao}>Visualizar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.botaoFinalizar}
+                    onPress={() => {
+                      finalizar(item.id)
+                        .then(() => {
+                          showAndHideMessage('Pedido finalizado com sucesso!');
+                          finalizar(item.id);                       
+                        })
+                        .catch((error) => {
+                          console.error('Erro ao finalizar o pedido:', error);
+                          showAndHideMessage('Erro ao finalizar o pedido');
+                      });
                   }}
-                >
-                  <Text style={styles.textoBotao}>Visualizar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.botaoFinalizar}
-                  onPress={() => {
-                    finalizar(item.id)
-                      .then(() => {
-                        showAndHideMessage('Pedido finalizado com sucesso');
-                        handlePedidoFinalizado(item.id);                        
-                      })
-                      .catch((error) => {
-                        console.error('Erro ao finalizar o pedido:', error);
-                        showAndHideMessage('Erro ao finalizar o pedido');
-                    });
-                }}
-                >
-                  <Text style={styles.textoBotao}>Finalizar</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-            extraData={reloadPage}
-          />
+                  >
+                    <Text style={styles.textoBotao}>Finalizar</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+              extraData={reloadPage}
+            />          
       </View>
       <View style={styles.barraTempoMedio}>
         <Text style={styles.textoTempoMedio}>Tempo médio de hoje: {listTempoMedio}</Text>
@@ -127,6 +135,17 @@ const styles = StyleSheet.create({
   scrollContainer: {
     maxHeight: 495,
     flex: 0,
+  },
+  emptyPedidoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 180,
+  },
+  emptyPedidoText: {
+    fontSize: 20,
+    color: 'black',
+    textAlign: 'center',
   },
   texto: {
     fontSize: 18,

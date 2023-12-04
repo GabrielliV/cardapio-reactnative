@@ -19,7 +19,7 @@ function LoginFuncionario({setNome, setId}) {
   return (
     <View style={styles.loginContainer}>
       <View style={styles.inputContainer}>
-        <Text style={styles.loginTitle}>LOGIN DO CARDÁPIO</Text>
+        <Text style={styles.loginTitle}>LOGIN DO FUNCIONÁRIO</Text>
         <TextInput
           style={styles.field}
           placeholder="Login"
@@ -33,6 +33,8 @@ function LoginFuncionario({setNome, setId}) {
             value={identificador}
             onChangeText={setIdentificador}
             secureTextEntry={true}
+            keyboardType="numeric"
+            maxLength={6}
           />
         </View>
         <View style={styles.inferior}>

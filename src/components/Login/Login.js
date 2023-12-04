@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { useNavigate } from 'react-router-native';
 import { loginCliente } from '../../services/Login';
 
-function Login({setMesaApp, setNomeEstabelecimentoApp, setIdApp}) {
+function Login({setMesaApp, setMesaIdApp, setNomeEstabelecimentoApp, setIdApp}) {
   const navigate = useNavigate();
   const [login, setLogin] = useState("");
   const [identificador, setIdentificador] = useState("");
@@ -34,12 +34,16 @@ function Login({setMesaApp, setNomeEstabelecimentoApp, setIdApp}) {
             value={identificador}
             onChangeText={setIdentificador}
             secureTextEntry={true}
+            keyboardType="numeric"
+            maxLength={6} 
           />
           <TextInput
             style={styles.mesaField}
             placeholder="Mesa"
             value={mesa}
-            onChangeText={setMesa}
+            onChangeText={(text) => setMesa(text.replace(/[^0-9]/g, ''))}
+            keyboardType="numeric"
+            maxLength={11} 
           />
         </View>
         <View style={styles.inferior}>
@@ -56,8 +60,11 @@ function Login({setMesaApp, setNomeEstabelecimentoApp, setIdApp}) {
                   .then((response) => {
                     if (!response.data || !response.data.mesa) {
                       showAndHideMessage('Mesa não encontrada.');
+                    } else if (!response.data.ativo) {
+                      showAndHideMessage('Essa mesa está inativa.');
                     } else {
                       setMesaApp(response.data.mesa);
+                      setMesaIdApp(response.data.id);
                       setNomeEstabelecimentoApp(response.data.estabelecimento.nome);
                       setIdApp(response.data.id);
                       navigate("/listaProdutos/1");

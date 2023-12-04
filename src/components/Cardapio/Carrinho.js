@@ -12,6 +12,7 @@ const Carrinho = () => {
     const appInfo = useContext(AppContext);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+    const [isInputObsVisible, setIsInputObsVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");    
     const [inputCod, setInputCod] = useState("");
     const [inputObs, setInputObs] = useState("");
@@ -92,6 +93,7 @@ const Carrinho = () => {
           'keyboardDidHide',
           () => {
             setIsKeyboardOpen(false);
+            setIsInputObsVisible(false);
           }
         );
     
@@ -155,7 +157,7 @@ const Carrinho = () => {
                             <Button
                                 title="Cancelar"
                                 onPress={() => setModalVisible(false)}
-                                buttonStyle={styles.modalButton}
+                                buttonStyle={styles.modalButtonCancelar}
                             />
                             <Button
                                 title="Pedir"
@@ -167,12 +169,13 @@ const Carrinho = () => {
                     </View>
                 </View>
             </Modal>
-            {isKeyboardOpen && (
+            {isInputObsVisible && isKeyboardOpen && (
             <View style={styles.obsTecladoAberto}>
                 <TextInput
-                style={styles.textoObsTecladoAberto}
-                onChangeText={setInputObs}
-                value={inputObs}
+                    style={styles.textoObsTecladoAberto}
+                    onChangeText={setInputObs}
+                    value={inputObs}
+                    onBlur={() => setIsInputObsVisible(false)}
                 />
             </View>
             )}
@@ -185,7 +188,7 @@ const Carrinho = () => {
                         onChangeText={setInputObs}
                         multiline={true} 
                         numberOfLines={4}
-                        onPressIn={() => setIsKeyboardOpen(true)}
+                        onFocus={() => setIsInputObsVisible(true)}
                     />
                 </View>               
                 <View style={styles.containerInferiorFinalizar}>
@@ -307,6 +310,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         justifyContent: 'center',
         alignItems: 'center',
+        zIndex: 1,
     },
     textoObsTecladoAberto: {
         color: 'black',
@@ -386,8 +390,14 @@ const styles = StyleSheet.create({
     modalButton: {
         marginTop: 10,
         marginHorizontal: 20,
-        paddingHorizontal: 20,
+        paddingHorizontal: 32,
         backgroundColor: '#3d9467',
+    },
+    modalButtonCancelar: {
+        marginTop: 10,
+        marginHorizontal: 20,
+        paddingHorizontal: 20,
+        backgroundColor: '#CD0707',
     },
     codInput: {
         width: 220,

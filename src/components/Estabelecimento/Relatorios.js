@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigate } from 'react-router-native';
-import { pratosSolicitados } from '../../services/Relatorios';
 import Central from './Central';
 
 const Relatorios = () => {

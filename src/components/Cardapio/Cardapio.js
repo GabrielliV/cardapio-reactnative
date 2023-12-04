@@ -10,7 +10,7 @@ const Cardapio = ({ children }) => {
   const appInfo = useContext(AppContext);
   const [modalVisible, setModalVisible] = useState(false);
   const [busca, setBusca] = useState("");
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
+  let [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
 
   const location = useLocation();
 
@@ -18,6 +18,7 @@ const Cardapio = ({ children }) => {
     if (location && location.state && location.state.categoriaSelecionada) {
       setCategoriaSelecionada(location.state.categoriaSelecionada);
     }
+
   }, [location]);
 
   const handleNavigate = () => {
@@ -34,10 +35,11 @@ const Cardapio = ({ children }) => {
   };
 
   const handleBuscaPress = (busca) => {
-    if (busca.trim() === "") {
+    if (busca.trim() === "") {      
       return;
     }
 
+    setCategoriaSelecionada("");
     navigate(`/listaProdutos/null/${busca ? encodeURIComponent(busca) : ''}`);
     setBusca("");
   };
@@ -104,7 +106,7 @@ const Cardapio = ({ children }) => {
               <Button
                 title="Não"
                 onPress={() => setModalVisible(false)}
-                buttonStyle={styles.modalButton}
+                buttonStyle={styles.modalButtonNao}
               />
             </View>
           </View>
@@ -122,7 +124,7 @@ const Cardapio = ({ children }) => {
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => handleCategoriaPress(3)}>
-            <Text style={[styles.categoria, categoriaSelecionada === 3 && styles.categoriaSelecionada]}>Bebidas Não Alcoólicas</Text>
+            <Text style={[styles.categoria, categoriaSelecionada === 3 && styles.categoriaSelecionada]}>Outras Bebidas</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => handleCategoriaPress(4)}>
@@ -231,7 +233,7 @@ const styles = StyleSheet.create({
   menu: {
     width: 223,
     backgroundColor: 'black',
-    paddingHorizontal: 20,
+    paddingHorizontal: 22,
   },
   categoria: {
     fontSize: 22,
@@ -269,6 +271,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   modalButton: {
+    marginTop: 10,
+    marginHorizontal: 20,
+    paddingHorizontal: 20,
+    backgroundColor: '#CD0707',
+  },
+  modalButtonNao: {
     marginTop: 10,
     marginHorizontal: 20,
     paddingHorizontal: 20,

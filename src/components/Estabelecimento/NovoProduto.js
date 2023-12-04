@@ -86,7 +86,6 @@ const NovoProduto = () => {
             criaProduto(nome, descricao, precoDouble, foto, categoriaId)
             .then((response) => {
                 if (response.data) {
-                    console.log(response.data);
                     showAndHideMessage('Produto criado com sucesso.');
                     setTimeout(() => {
                         navigate(`/produto/${response.data}`);

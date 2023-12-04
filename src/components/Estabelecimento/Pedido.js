@@ -42,7 +42,7 @@ const Pedido = () => {
             <Text style={styles.label}>PEDIDO {listPedido.id}</Text>
             <Text style={styles.label}>QTDE</Text>
         </View>
-        <View>
+        <View style={styles.containerItens}>
             <FlatList
                 data={listPedido.itemPedido}
                 keyExtractor={(item) => item.id}
@@ -57,14 +57,15 @@ const Pedido = () => {
             />            
         </View>
         <View style={styles.inferior}>
+            <Text style={styles.mesa}>MESA: {listPedido.mesa}</Text>
             <Text style={styles.label}>OBSERVAÇÃO:</Text>
-            <View style={styles.barraInferior}>
+            <View style={styles.barraInferior}>            
             <Text style={styles.observacao}>{listPedido.observacao}</Text>
                 <TouchableOpacity style={styles.botaoFinalizar} 
                     onPress={() => {
                         finalizar(listPedido.id)
                         .then(() => {
-                            showAndHideMessage('Pedido finalizado com sucesso');
+                            showAndHideMessage('Pedido finalizado com sucesso!');
                             setTimeout(() => {
                                 navigate("/pedidos");
                             }, 2000);               
@@ -93,10 +94,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: 23,
         justifyContent: 'space-between',
-        marginEnd: 200,
+        marginEnd: 200,        
+    },
+    containerItens: {
+        maxHeight: 420,
+        flex: 0,
     },
     itens: {
-        padding: 23,
+        padding: 23,        
         justifyContent: 'space-between',
     },
     infoContainer: {
@@ -133,6 +138,12 @@ const styles = StyleSheet.create({
     },
     observacao: {
         fontSize: 18,
+    },
+    mesa: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        bottom: 10,
+        color: '#3d9467',
     },
     barraInferior: {
         justifyContent: 'space-between',
